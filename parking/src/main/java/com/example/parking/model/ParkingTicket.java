@@ -29,9 +29,6 @@ public class ParkingTicket {
     public int getTicketID() {
         return ticketID;
     }
-    public void setTicketID(int ticketID) {
-        this.ticketID = ticketID;
-    }
     public Vehicle getVehicle() {
         return vehicle;
     }
