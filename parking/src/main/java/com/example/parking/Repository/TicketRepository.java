@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.parking.VehicleType;
 import com.example.parking.model.ParkingTicket;
 import com.example.parking.model.Vehicle;
 
