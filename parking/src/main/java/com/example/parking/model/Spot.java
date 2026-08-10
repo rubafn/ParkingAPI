@@ -1,6 +1,10 @@
 package com.example.parking.model;
 
+import com.example.parking.VehicleType;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -12,8 +16,11 @@ public class Spot {
     @GeneratedValue
     private int spotID;
     
-    private char type;
-    private boolean free;
+    @Enumerated(EnumType.STRING)
+    private VehicleType type;
+
+    private boolean isAvailable;
+    private int spotNumber;
 
     @ManyToOne/////////////
     @JoinColumn(name = "branchID") // FK column /////////////////
@@ -23,20 +30,28 @@ public class Spot {
         return spotID;
     }
 
-    public char getType() {
+    public VehicleType getType() {
         return type;
     }
 
-    public void setType(char type) {
+    public void setType(VehicleType type) {
         this.type = type;
     }
 
-    public boolean isFree() {
-        return free;
+    public boolean isAvailable() {
+        return isAvailable;
     }
 
-    public void setFree(boolean free) {
-        this.free = free;
+    public void setAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
+    }
+
+    public int getSpotNumber() {
+        return spotNumber;
+    }
+
+    public void setSpotNumber(int spotNumber) {
+        this.spotNumber = spotNumber;
     }
 
     public Branch getBranch() {

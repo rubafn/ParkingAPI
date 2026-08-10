@@ -9,8 +9,9 @@ public class Branch {
     @Id
     @GeneratedValue
     private int branchID;
-    
+
     private String location;
+    
     public int getBranchID() {
         return branchID;
     }
