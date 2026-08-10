@@ -1,15 +1,15 @@
 package com.example.parking.DTO;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class VehicleExitResponse {
     private String plateNumber;
-    private LocalDateTime entryTime;
-    private LocalDateTime exitTime;
+    private LocalTime entryTime;
+    private LocalTime exitTime;
     private long durationHours;
     private double fee;
 
-    public VehicleExitResponse(String plateNumber, LocalDateTime entryTime, LocalDateTime exitTime, long durationHours,
+    public VehicleExitResponse(String plateNumber, LocalTime entryTime, LocalTime exitTime, long durationHours,
             double fee) {
         this.plateNumber = plateNumber;
         this.entryTime = entryTime;
@@ -23,16 +23,16 @@ public class VehicleExitResponse {
     public void setPlateNumber(String plateNumber) {
         this.plateNumber = plateNumber;
     }
-    public LocalDateTime getEntryTime() {
+    public LocalTime getEntryTime() {
         return entryTime;
     }
-    public void setEntryTime(LocalDateTime entryTime) {
+    public void setEntryTime(LocalTime entryTime) {
         this.entryTime = entryTime;
     }
-    public LocalDateTime getExitTime() {
+    public LocalTime getExitTime() {
         return exitTime;
     }
-    public void setExitTime(LocalDateTime exitTime) {
+    public void setExitTime(LocalTime exitTime) {
         this.exitTime = exitTime;
     }
     public long getDurationHours() {
