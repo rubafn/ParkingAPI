@@ -8,7 +8,15 @@ public class VehicleExitResponse {
     private LocalDateTime exitTime;
     private long durationHours;
     private double fee;
-    
+
+    public VehicleExitResponse(String plateNumber, LocalDateTime entryTime, LocalDateTime exitTime, long durationHours,
+            double fee) {
+        this.plateNumber = plateNumber;
+        this.entryTime = entryTime;
+        this.exitTime = exitTime;
+        this.durationHours = durationHours;
+        this.fee = fee;
+    }
     public String getPlateNumber() {
         return plateNumber;
     }
