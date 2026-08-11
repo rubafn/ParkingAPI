@@ -2,6 +2,7 @@ package com.example.parking.Service;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -91,5 +92,24 @@ public class ParkingService {
         spotRepo.save(spot);
 
         return new VehicleExitResponse(plate, ticket.getEntryTime(), ticket.getExitTime(), duration, fee);
+    }
+    public List<Spot> getAllSpots(){
+        return this.spotRepo.findAll();
+    }
+    public List<Spot> getAvailableSpots(){
+        return this.spotRepo.findAllByIsAvailableTrue();
+    }
+
+    public List<Vehicle> findAllVehicles() {
+        return this.vehicleRepo.findAll();
+    }
+    public List<Vehicle> findAllVehiclesByType(VehicleType type){
+        return this.vehicleRepo.findAllVehiclesByType(type);
+    }
+    public List<ParkingTicket> findAllTickets(){
+        return this.ticketRepo.findAll();
+    }
+    public List<ParkingTicket> findAllOngoingTickets(){
+        return this.ticketRepo.findAllByExitTimeNull();
     }
 }
