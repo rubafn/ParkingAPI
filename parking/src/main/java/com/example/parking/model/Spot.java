@@ -2,6 +2,7 @@ package com.example.parking.model;
 
 import com.example.parking.VehicleType;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -14,12 +15,16 @@ import jakarta.persistence.ManyToOne;
 public class Spot {
     @Id
     @GeneratedValue
+    @Column(name = "spotID")
     private int spotID;
     
     @Enumerated(EnumType.STRING)
     private VehicleType type;
 
+    @Column(name = "isAvailable")
     private boolean isAvailable;
+
+    @Column(name = "spotNumber")
     private int spotNumber;
 
     @ManyToOne/////////////

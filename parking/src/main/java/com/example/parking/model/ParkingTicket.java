@@ -2,6 +2,7 @@ package com.example.parking.model;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -13,6 +14,7 @@ public class ParkingTicket {
     
     @Id
     @GeneratedValue
+    @Column(name = "ticketID")
     private int ticketID;
 
     @ManyToOne
@@ -24,8 +26,11 @@ public class ParkingTicket {
     private Spot spot;
 
     private double fee;
+    @Column(name = "entryTime")
     private LocalDateTime entryTime;
+    @Column(name = "exitTime")
     private LocalDateTime exitTime;
+    
     public int getTicketID() {
         return ticketID;
     }

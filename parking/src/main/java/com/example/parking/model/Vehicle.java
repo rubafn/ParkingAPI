@@ -2,6 +2,7 @@ package com.example.parking.model;
 
 import com.example.parking.VehicleType;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,8 +13,10 @@ import jakarta.persistence.Id;
 public class Vehicle {
     @Id
     @GeneratedValue
+    @Column(name = "vehicleID")
     private int vehicleID;
 
+    @Column(name = "licencePlate")
     private String licencePlate;
 
     @Enumerated(EnumType.STRING)

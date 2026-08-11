@@ -1,5 +1,6 @@
 package com.example.parking.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -8,6 +9,7 @@ import jakarta.persistence.Id;
 public class Branch {
     @Id
     @GeneratedValue
+    @Column(name = "branchID")
     private int branchID;
 
     private String location;
