@@ -6,6 +6,8 @@ public class VehicleEntryRequest {
     private String licencePlate;
     private VehicleType vehicleType;
     
+    public VehicleEntryRequest(){
+    }
     public VehicleEntryRequest(String licencePlate, VehicleType vehicleType) {
         this.licencePlate = licencePlate;
         this.vehicleType = vehicleType;

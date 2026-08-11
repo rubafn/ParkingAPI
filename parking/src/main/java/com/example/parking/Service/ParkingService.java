@@ -10,6 +10,10 @@ import com.example.parking.VehicleType;
 import com.example.parking.DTO.VehicleEntryRequest;
 import com.example.parking.DTO.VehicleEntryResponse;
 import com.example.parking.DTO.VehicleExitResponse;
+import com.example.parking.Exceptions.AlreadyParkedException;
+import com.example.parking.Exceptions.NoAvailableSpotsException;
+import com.example.parking.Exceptions.NoTicketFoundException;
+import com.example.parking.Exceptions.NoVehicleFoundException;
 import com.example.parking.Repository.SpotRepository;
 import com.example.parking.Repository.TicketRepository;
 import com.example.parking.Repository.VehicleRepository;
@@ -37,7 +41,7 @@ public class ParkingService {
         Spot spot = spotRepo.findFirstByTypeAndIsAvailableTrue(type);
         //no available spots
         if(spot==null){
-            //throw exception
+            throw new NoAvailableSpotsException("No spots are available for this vehicle type");
         }
         //create new vehicle or use existing vehicle
         Vehicle vehicle = vehicleRepo.findByLicencePlate(plate);
@@ -50,7 +54,7 @@ public class ParkingService {
         }
         ParkingTicket ticket = ticketRepo.findByVehicleVehicleIdAndExitTimeIsNull(vehicle.getVehicleId());
         if(ticket != null){
-            //throw exception that there is already an ongoing ticket
+            throw new AlreadyParkedException("Vehicle Already has an ongoing ticket that didn't exit");
         }
         spot.setAvailable(false);
         spotRepo.save(spot);
@@ -68,11 +72,11 @@ public class ParkingService {
         Vehicle vehicle = vehicleRepo.findByLicencePlate(plate);
 
         if(vehicle == null){//vehicle doesnt have a ticket
-            //throw ezxception
+            throw new NoVehicleFoundException("Vehicle not found in parking");
         }
         ParkingTicket ticket = ticketRepo.findByVehicleVehicleIdAndExitTimeIsNull(vehicle.getVehicleId());
         if(ticket == null){
-            //exception ticket doesnt exist (no entry to exit)
+            throw new NoTicketFoundException("Ticket either doesn't exist or already exited");
         }
         ticket.setExitTime(LocalDateTime.now());
         Long duration = Duration.between(ticket.getEntryTime(), ticket.getExitTime()).toMinutes();
