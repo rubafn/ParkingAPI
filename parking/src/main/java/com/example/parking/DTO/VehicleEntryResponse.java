@@ -1,14 +1,14 @@
 package com.example.parking.DTO;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 public class VehicleEntryResponse {
     
     private String licencePlate;
     private int assignedSpot;
-    private LocalTime entryTime;
+    private LocalDateTime entryTime;
 
-    public VehicleEntryResponse(String licencePlate, int assignedSpot, LocalTime entry){
+    public VehicleEntryResponse(String licencePlate, int assignedSpot, LocalDateTime entry){
         this.licencePlate= licencePlate;
         this.assignedSpot=assignedSpot;
         this.entryTime = entry;
@@ -29,11 +29,11 @@ public class VehicleEntryResponse {
         this.licencePlate = licencePlate;
     }
 
-    public LocalTime getEntryTime() {
+    public LocalDateTime getEntryTime() {
         return entryTime;
     }
 
-    public void setEntryTime(LocalTime entryTime) {
+    public void setEntryTime(LocalDateTime entryTime) {
         this.entryTime = entryTime;
     }
 

@@ -1,6 +1,7 @@
 package com.example.parking.Service;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -58,10 +59,10 @@ public class ParkingService {
         ticket = new ParkingTicket();
         ticket.setSpot(spot);
         ticket.setVehicle(vehicle);
-        ticket.setEntryTime(LocalTime.now());
+        ticket.setEntryTime(LocalDateTime.now());
         ticketRepo.save(ticket);
 
-        return new VehicleEntryResponse(plate, spot.getSpotNumber(), LocalTime.now());
+        return new VehicleEntryResponse(plate, spot.getSpotNumber(), LocalDateTime.now());
     }
 
     public VehicleExitResponse exitVehicle(String plate){
@@ -74,7 +75,7 @@ public class ParkingService {
         if(ticket == null){
             //exception ticket doesnt exist (no entry to exit)
         }
-        ticket.setExitTime(LocalTime.now());
+        ticket.setExitTime(LocalDateTime.now());
         Long duration = Duration.between(ticket.getEntryTime(), ticket.getExitTime()).toMinutes();
         double fee = (duration/60.0);
         if(vehicle.getType()==VehicleType.CAR){

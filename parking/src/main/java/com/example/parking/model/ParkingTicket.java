@@ -1,6 +1,6 @@
 package com.example.parking.model;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,8 +24,8 @@ public class ParkingTicket {
     private Spot spot;
 
     private double fee;
-    private LocalTime entryTime;
-    private LocalTime exitTime;
+    private LocalDateTime entryTime;
+    private LocalDateTime exitTime;
     public int getTicketID() {
         return ticketID;
     }
@@ -47,16 +47,16 @@ public class ParkingTicket {
     public void setFee(double fee) {
         this.fee = fee;
     }
-    public LocalTime getEntryTime() {
+    public LocalDateTime getEntryTime() {
         return entryTime;
     }
-    public void setEntryTime(LocalTime entryTime) {
+    public void setEntryTime(LocalDateTime entryTime) {
         this.entryTime = entryTime;
     }
-    public LocalTime getExitTime() {
+    public LocalDateTime getExitTime() {
         return exitTime;
     }
-    public void setExitTime(LocalTime exitTime) {
+    public void setExitTime(LocalDateTime exitTime) {
         this.exitTime = exitTime;
     } 
 

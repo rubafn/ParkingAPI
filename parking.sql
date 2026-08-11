@@ -29,9 +29,9 @@ create table parking_ticket (
 	ticketID serial primary key,
 	vehicleID int not null,
 	spotID int not null,
-	fee float not null,
-	entryTime time not null,
-	exitTime time,
+	fee numeric(10,2) not null,
+	entryTime timestamp not null,
+	exitTime timestamp,
 	foreign key(spotID) references spot(spotID),
 	foreign key(vehicleID) references vehicle(vehicleID)
 );
