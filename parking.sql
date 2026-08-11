@@ -57,8 +57,7 @@ INSERT INTO vehicle (licence_plate, type) VALUES
 ('45-678-90', 'MOTORCYCLE'),
 ('56-789-01', 'MOTORCYCLE'),
 ('67-890-12', 'TRUCK'),
-('78-901-23', 'TRUCK'),
-('89-012-34', 'BUS');
+('78-901-23', 'TRUCK');
 
 
 -- =========================
@@ -76,36 +75,22 @@ INSERT INTO spot (branch_id, spot_number, type, is_available) VALUES
 (2, 2, 'CAR', false),
 (2, 3, 'MOTORCYCLE', true),
 (2, 4, 'TRUCK', true),
-(2, 5, 'BUS', true),
 (3, 1, 'CAR', true),
 (3, 2, 'CAR', true),
 (3, 3, 'MOTORCYCLE', true),
-(3, 4, 'TRUCK', false),
-(3, 5, 'BUS', true);
+(3, 4, 'TRUCK', false);
 
 -- =========================
 -- PARKING TICKETS
 -- =========================
 
--- Completed tickets
 INSERT INTO parking_ticket
 (vehicle_id, spot_id, fee, entry_time, exit_time) VALUES
 (1, 1, 8.00, '2026-08-10 07:30:00', '2026-08-10 09:30:00'),
 (3, 3, 12.00, '2026-08-10 08:00:00', '2026-08-10 11:00:00'),
 (4, 4, 5.00, '2026-08-10 09:00:00', '2026-08-10 10:30:00'),
 (5, 8, 6.00, '2026-08-10 10:15:00', '2026-08-10 12:00:00'),
-(7, 13, 30.00, '2026-08-10 06:30:00', '2026-08-10 10:30:00');
+(6, 12, 30.00, '2026-08-10 06:30:00', '2026-08-10 10:30:00'),
+(2, 2, 0, '2026-08-11 08:30:00', NULL);
 
 
--- =========================
--- ONGOING PARKING
--- exitTime = NULL
--- =========================
-
-INSERT INTO parking_ticket
-(vehicle_id, spot_id, fee, entry_time, exit_time) VALUES
-(2, 2, 0, '2026-08-11 08:30:00', NULL),
-(6, 9, 0, '2026-08-11 09:15:00', NULL),
-(8, 14, 0, '2026-08-11 10:00:00', NULL);
-
-select * from parking_ticket;

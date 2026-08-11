@@ -37,8 +37,8 @@ public class ParkingController {
         return this.service.enterVehicle(request);
     }
     @PostMapping("/exit/{plateNumber}")
-    public VehicleExitResponse exitVehicle(@PathVariable String plate) {
-        return this.service.exitVehicle(plate);
+    public VehicleExitResponse exitVehicle(@PathVariable String plateNumber) {
+        return this.service.exitVehicle(plateNumber);
     }
     @GetMapping("/spots")
     public List<Spot> getAllSpots() {
