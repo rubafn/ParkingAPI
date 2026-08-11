@@ -95,7 +95,7 @@ public class ParkingService {
         spot.setAvailable(true);
         spotRepo.save(spot);
 
-        return new VehicleExitResponse(plate, ticket.getEntryTime(), ticket.getExitTime(), (long)(duration/60.0), fee);
+        return new VehicleExitResponse(plate, ticket.getEntryTime(), ticket.getExitTime(), (double)(duration/60.0), fee);
     }
     public List<Spot> getAllSpots(){
         return this.spotRepo.findAll();
