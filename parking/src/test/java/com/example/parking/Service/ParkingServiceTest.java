@@ -1,17 +1,14 @@
 package com.example.parking.Service;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +27,6 @@ import com.example.parking.Exceptions.NoVehicleFoundException;
 import com.example.parking.Repository.SpotRepository;
 import com.example.parking.Repository.TicketRepository;
 import com.example.parking.Repository.VehicleRepository;
-import com.example.parking.model.Branch;
 import com.example.parking.model.ParkingTicket;
 import com.example.parking.model.Spot;
 import com.example.parking.model.Vehicle;
@@ -164,7 +160,7 @@ public class ParkingServiceTest {
 
         // Existing active ticket
         ParkingTicket ticket = new ParkingTicket();
-        ticket.setEntryTime(LocalDateTime.now());
+        ticket.setEntryTime(LocalDateTime.now().minusHours(5));
         ticket.setVehicle(v);
         ticket.setSpot(s);
 
@@ -183,6 +179,8 @@ public class ParkingServiceTest {
         assertEquals("12345", response.getPlateNumber());
 
         assertNotNull(ticket.getExitTime());
+
+        assertNotEquals(ticket.getFee(),0);
     }
 
     @Test
