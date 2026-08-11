@@ -2,7 +2,6 @@ package com.example.parking.model;
 
 import com.example.parking.VehicleType;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -15,24 +14,20 @@ import jakarta.persistence.ManyToOne;
 public class Spot {
     @Id
     @GeneratedValue
-    @Column(name = "spotID")
-    private int spotID;
+    private int spot_id;
     
     @Enumerated(EnumType.STRING)
     private VehicleType type;
 
-    @Column(name = "isAvailable")
-    private boolean isAvailable;
-
-    @Column(name = "spotNumber")
-    private int spotNumber;
+    private boolean is_available;
+    private int spot_number;
 
     @ManyToOne/////////////
-    @JoinColumn(name = "branchID") // FK column /////////////////
+    @JoinColumn(name = "branch_id") // FK column /////////////////
     private Branch branch;
 
-    public int getSpotID() {
-        return spotID;
+    public int getSpotId() {
+        return spot_id;
     }
 
     public VehicleType getType() {
@@ -44,19 +39,19 @@ public class Spot {
     }
 
     public boolean isAvailable() {
-        return isAvailable;
+        return is_available;
     }
 
     public void setAvailable(boolean isAvailable) {
-        this.isAvailable = isAvailable;
+        this.is_available = isAvailable;
     }
 
     public int getSpotNumber() {
-        return spotNumber;
+        return spot_number;
     }
 
     public void setSpotNumber(int spotNumber) {
-        this.spotNumber = spotNumber;
+        this.spot_number = spotNumber;
     }
 
     public Branch getBranch() {

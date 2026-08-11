@@ -2,7 +2,6 @@ package com.example.parking.model;
 
 import com.example.parking.VehicleType;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -13,25 +12,23 @@ import jakarta.persistence.Id;
 public class Vehicle {
     @Id
     @GeneratedValue
-    @Column(name = "vehicleID")
-    private int vehicleID;
+    private int vehicle_id;
 
-    @Column(name = "licencePlate")
-    private String licencePlate;
+    private String licence_plate;
 
     @Enumerated(EnumType.STRING)
     private VehicleType type;
 
-    public int getVehicleID() {
-        return vehicleID;
+    public int getVehicleId() {
+        return vehicle_id;
     }
 
     public String getLicencePlate() {
-        return licencePlate;
+        return licence_plate;
     }
 
     public void setLicencePlate(String licencePlate) {
-        this.licencePlate = licencePlate;
+        this.licence_plate = licencePlate;
     }
 
     public VehicleType getType() {

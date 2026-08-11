@@ -1,7 +1,6 @@
 package com.example.parking.DTO;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 public class VehicleExitResponse {
     private String plateNumber;

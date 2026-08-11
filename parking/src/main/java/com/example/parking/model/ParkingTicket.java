@@ -2,7 +2,6 @@ package com.example.parking.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -14,25 +13,22 @@ public class ParkingTicket {
     
     @Id
     @GeneratedValue
-    @Column(name = "ticketID")
-    private int ticketID;
+    private int ticket_id;
 
     @ManyToOne
-    @JoinColumn(name ="vehicleID")
+    @JoinColumn(name ="vehicle_id")
     private Vehicle vehicle;
 
     @ManyToOne
-    @JoinColumn(name ="spotID")
+    @JoinColumn(name ="spot_id")
     private Spot spot;
 
     private double fee;
-    @Column(name = "entryTime")
-    private LocalDateTime entryTime;
-    @Column(name = "exitTime")
-    private LocalDateTime exitTime;
-    
-    public int getTicketID() {
-        return ticketID;
+    private LocalDateTime entry_time;
+    private LocalDateTime exit_time;
+
+    public int getTicketId() {
+        return ticket_id;
     }
     public Vehicle getVehicle() {
         return vehicle;
@@ -53,16 +49,16 @@ public class ParkingTicket {
         this.fee = fee;
     }
     public LocalDateTime getEntryTime() {
-        return entryTime;
+        return entry_time;
     }
     public void setEntryTime(LocalDateTime entryTime) {
-        this.entryTime = entryTime;
+        this.entry_time = entryTime;
     }
     public LocalDateTime getExitTime() {
-        return exitTime;
+        return exit_time;
     }
     public void setExitTime(LocalDateTime exitTime) {
-        this.exitTime = exitTime;
+        this.exit_time = exitTime;
     } 
 
     

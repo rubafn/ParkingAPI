@@ -7,33 +7,33 @@
 --drop table if exists branch;
 
 create table branch (
-	branchID serial primary key,
+	branch_id serial primary key,
 	location varchar(50) not null
 );
 create table vehicle (
-	vehicleID serial primary key,
-	licencePlate varchar(32),
-	Unique(licencePlate),
+	vehicle_id serial primary key,
+	licence_plate varchar(32),
+	Unique(licence_plate),
 	type varchar(20) not null
 );
 create table spot (
-	branchID int,
-	spotID serial primary key,
-	spotNumber int not null,
+	branch_id int,
+	spot_id serial primary key,
+	spot_number int not null,
 	type varchar(20) not null,
-	isAvailable bool not null default true,
-	UNIQUE (branchID, spotNumber),
-	foreign key(branchID) references branch(branchID)
+	is_available bool not null default true,
+	UNIQUE (branch_id, spot_number),
+	foreign key(branch_id) references branch(branch_id)
 );
 create table parking_ticket (
-	ticketID serial primary key,
-	vehicleID int not null,
-	spotID int not null,
+	ticket_id serial primary key,
+	vehicle_id int not null,
+	spot_id int not null,
 	fee numeric(10,2) not null,
-	entryTime timestamp not null,
-	exitTime timestamp,
-	foreign key(spotID) references spot(spotID),
-	foreign key(vehicleID) references vehicle(vehicleID)
+	entry_time timestamp not null,
+	exit_time timestamp,
+	foreign key(spot_id) references spot(spot_id),
+	foreign key(vehicle_id) references vehicle(vehicle_id)
 );
 
 -- =========================
@@ -50,7 +50,7 @@ INSERT INTO branch (location) VALUES
 -- VEHICLES
 -- =========================
 
-INSERT INTO vehicle (licencePlate, type) VALUES
+INSERT INTO vehicle (licence_plate, type) VALUES
 ('12-345-67', 'CAR'),
 ('23-456-78', 'CAR'),
 ('34-567-89', 'CAR'),
@@ -66,7 +66,7 @@ INSERT INTO vehicle (licencePlate, type) VALUES
 -- =========================
 
 
-INSERT INTO spot (branchID, spotNumber, type, isAvailable) VALUES
+INSERT INTO spot (branch_id, spot_number, type, is_available) VALUES
 (1, 1, 'CAR', true),
 (1, 2, 'CAR', false),
 (1, 3, 'CAR', true),
@@ -89,7 +89,7 @@ INSERT INTO spot (branchID, spotNumber, type, isAvailable) VALUES
 
 -- Completed tickets
 INSERT INTO parking_ticket
-(vehicleID, spotID, fee, entryTime, exitTime) VALUES
+(vehicle_id, spot_id, fee, entry_time, exit_time) VALUES
 (1, 1, 8.00, '2026-08-10 07:30:00', '2026-08-10 09:30:00'),
 (3, 3, 12.00, '2026-08-10 08:00:00', '2026-08-10 11:00:00'),
 (4, 4, 5.00, '2026-08-10 09:00:00', '2026-08-10 10:30:00'),
@@ -103,9 +103,9 @@ INSERT INTO parking_ticket
 -- =========================
 
 INSERT INTO parking_ticket
-(vehicleID, spotID, fee, entryTime, exitTime) VALUES
-(2, 2, 10.00, '2026-08-11 08:30:00', NULL),
-(6, 9, 25.00, '2026-08-11 09:15:00', NULL),
-(8, 14, 20.00, '2026-08-11 10:00:00', NULL);
+(vehicle_id, spot_id, fee, entry_time, exit_time) VALUES
+(2, 2, 0, '2026-08-11 08:30:00', NULL),
+(6, 9, 0, '2026-08-11 09:15:00', NULL),
+(8, 14, 0, '2026-08-11 10:00:00', NULL);
 
-
+select * from parking_ticket;
