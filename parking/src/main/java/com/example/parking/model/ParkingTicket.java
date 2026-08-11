@@ -13,7 +13,7 @@ public class ParkingTicket {
     
     @Id
     @GeneratedValue
-    private int ticket_id;
+    private int ticketId;
 
     @ManyToOne
     @JoinColumn(name ="vehicle_id")
@@ -24,11 +24,11 @@ public class ParkingTicket {
     private Spot spot;
 
     private double fee;
-    private LocalDateTime entry_time;
-    private LocalDateTime exit_time;
+    private LocalDateTime entryTime;
+    private LocalDateTime exitTime;
 
     public int getTicketId() {
-        return ticket_id;
+        return ticketId;
     }
     public Vehicle getVehicle() {
         return vehicle;
@@ -49,16 +49,16 @@ public class ParkingTicket {
         this.fee = fee;
     }
     public LocalDateTime getEntryTime() {
-        return entry_time;
+        return entryTime;
     }
     public void setEntryTime(LocalDateTime entryTime) {
-        this.entry_time = entryTime;
+        this.entryTime = entryTime;
     }
     public LocalDateTime getExitTime() {
-        return exit_time;
+        return exitTime;
     }
     public void setExitTime(LocalDateTime exitTime) {
-        this.exit_time = exitTime;
+        this.exitTime = exitTime;
     } 
 
     

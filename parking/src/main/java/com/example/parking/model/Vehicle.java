@@ -12,23 +12,23 @@ import jakarta.persistence.Id;
 public class Vehicle {
     @Id
     @GeneratedValue
-    private int vehicle_id;
+    private int vehicleId;
 
-    private String licence_plate;
+    private String licencePlate;
 
     @Enumerated(EnumType.STRING)
     private VehicleType type;
 
     public int getVehicleId() {
-        return vehicle_id;
+        return vehicleId;
     }
 
     public String getLicencePlate() {
-        return licence_plate;
+        return licencePlate;
     }
 
     public void setLicencePlate(String licencePlate) {
-        this.licence_plate = licencePlate;
+        this.licencePlate = licencePlate;
     }
 
     public VehicleType getType() {

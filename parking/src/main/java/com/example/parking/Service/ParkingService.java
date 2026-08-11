@@ -48,7 +48,7 @@ public class ParkingService {
             vehicle.setType(type);
             vehicleRepo.save(vehicle);
         }
-        ParkingTicket ticket = ticketRepo.findByVehicleVehicleIDAndExitTimeIsNull(vehicle.getVehicleID());
+        ParkingTicket ticket = ticketRepo.findByVehicleVehicleIdAndExitTimeIsNull(vehicle.getVehicleId());
         if(ticket != null){
             //throw exception that there is already an ongoing ticket
         }
@@ -70,7 +70,7 @@ public class ParkingService {
         if(vehicle == null){//vehicle doesnt have a ticket
             //throw ezxception
         }
-        ParkingTicket ticket = ticketRepo.findByVehicleVehicleIDAndExitTimeIsNull(vehicle.getVehicleID());
+        ParkingTicket ticket = ticketRepo.findByVehicleVehicleIdAndExitTimeIsNull(vehicle.getVehicleId());
         if(ticket == null){
             //exception ticket doesnt exist (no entry to exit)
         }

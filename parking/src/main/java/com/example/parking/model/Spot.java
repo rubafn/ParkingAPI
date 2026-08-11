@@ -14,20 +14,20 @@ import jakarta.persistence.ManyToOne;
 public class Spot {
     @Id
     @GeneratedValue
-    private int spot_id;
+    private int spotId;
     
     @Enumerated(EnumType.STRING)
     private VehicleType type;
 
-    private boolean is_available;
-    private int spot_number;
+    private boolean isAvailable;
+    private int spotNumber;
 
     @ManyToOne/////////////
     @JoinColumn(name = "branch_id") // FK column /////////////////
     private Branch branch;
 
     public int getSpotId() {
-        return spot_id;
+        return spotId;
     }
 
     public VehicleType getType() {
@@ -39,19 +39,19 @@ public class Spot {
     }
 
     public boolean isAvailable() {
-        return is_available;
+        return isAvailable;
     }
 
     public void setAvailable(boolean isAvailable) {
-        this.is_available = isAvailable;
+        this.isAvailable = isAvailable;
     }
 
     public int getSpotNumber() {
-        return spot_number;
+        return spotNumber;
     }
 
     public void setSpotNumber(int spotNumber) {
-        this.spot_number = spotNumber;
+        this.spotNumber = spotNumber;
     }
 
     public Branch getBranch() {

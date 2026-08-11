@@ -8,12 +8,12 @@ import jakarta.persistence.Id;
 public class Branch {
     @Id
     @GeneratedValue
-    private int branch_id;
+    private int branchId;
 
     private String location;
     
     public int getBranchId() {
-        return branch_id;
+        return branchId;
     }
     public String getLocation() {
         return location;
