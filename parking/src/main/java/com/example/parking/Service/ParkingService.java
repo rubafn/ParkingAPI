@@ -17,6 +17,8 @@ import com.example.parking.Exceptions.NoVehicleFoundException;
 import com.example.parking.Repository.SpotRepository;
 import com.example.parking.Repository.TicketRepository;
 import com.example.parking.Repository.VehicleRepository;
+import com.example.parking.Strategy.FeeStrategy;
+import com.example.parking.Strategy.TypesFeeStrategy;
 import com.example.parking.model.ParkingTicket;
 import com.example.parking.model.Spot;
 import com.example.parking.model.Vehicle;
@@ -80,14 +82,10 @@ public class ParkingService {
         }
         ticket.setExitTime(LocalDateTime.now());
         Long duration = Duration.between(ticket.getEntryTime(), ticket.getExitTime()).toMinutes();
-        double fee = (duration/60.0);
-        if(vehicle.getType()==VehicleType.CAR){
-            fee *= 7;
-        }else if(vehicle.getType()==VehicleType.MOTORCYCLE){
-            fee *= 5;
-        }else if (vehicle.getType()== VehicleType.TRUCK){
-            fee*= 10;
-        }
+        TypesFeeStrategy typesStrategy = new TypesFeeStrategy();
+        FeeStrategy strategy = typesStrategy.getFeeStrategy(vehicle.getType());
+        double fee = strategy.calculateFee(duration);
+        
         ticket.setFee(fee);
         ticketRepo.save(ticket);
 
