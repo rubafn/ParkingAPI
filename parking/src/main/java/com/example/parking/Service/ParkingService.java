@@ -40,7 +40,7 @@ public class ParkingService {
             //throw exception
         }
         //create new vehicle or use existing vehicle
-        Vehicle vehicle = vehicleRepo.findFirstByLicencePlateVehicle(plate);
+        Vehicle vehicle = vehicleRepo.findByLicencePlate(plate);
 
         if(vehicle==null){
             vehicle = new Vehicle();
@@ -48,7 +48,7 @@ public class ParkingService {
             vehicle.setType(type);
             vehicleRepo.save(vehicle);
         }
-        ParkingTicket ticket = ticketRepo.findByvehicleIDAndexitTimeNull(vehicle.getVehicleID());
+        ParkingTicket ticket = ticketRepo.findByVehicleVehicleIDAndExitTimeIsNull(vehicle.getVehicleID());
         if(ticket != null){
             //throw exception that there is already an ongoing ticket
         }
@@ -65,12 +65,12 @@ public class ParkingService {
     }
 
     public VehicleExitResponse exitVehicle(String plate){
-        Vehicle vehicle = vehicleRepo.findFirstByLicencePlateVehicle(plate);
+        Vehicle vehicle = vehicleRepo.findByLicencePlate(plate);
 
         if(vehicle == null){//vehicle doesnt have a ticket
             //throw ezxception
         }
-        ParkingTicket ticket = ticketRepo.findByvehicleIDAndexitTimeNull(vehicle.getVehicleID());
+        ParkingTicket ticket = ticketRepo.findByVehicleVehicleIDAndExitTimeIsNull(vehicle.getVehicleID());
         if(ticket == null){
             //exception ticket doesnt exist (no entry to exit)
         }
@@ -104,12 +104,13 @@ public class ParkingService {
         return this.vehicleRepo.findAll();
     }
     public List<Vehicle> findAllVehiclesByType(VehicleType type){
-        return this.vehicleRepo.findAllVehiclesByType(type);
+        return this.vehicleRepo.findAllByType(type);
     }
     public List<ParkingTicket> findAllTickets(){
         return this.ticketRepo.findAll();
     }
     public List<ParkingTicket> findAllOngoingTickets(){
-        return this.ticketRepo.findAllByExitTimeNull();
+        return this.ticketRepo.findAllByExitTimeIsNull();
     }
+
 }

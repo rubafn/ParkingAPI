@@ -1,7 +1,7 @@
 -- Database: parking
 
 -- DROP DATABASE IF EXISTS parking;
---drop table if exists reservation;
+--drop table if exists parking_ticket;
 --drop table if exists spot;
 --drop table if exists vehicle;
 --drop table if exists branch;
@@ -13,6 +13,7 @@ create table branch (
 create table vehicle (
 	vehicleID serial primary key,
 	licencePlate varchar(32),
+	Unique(licencePlate),
 	type varchar(20) not null
 );
 create table spot (
@@ -24,7 +25,7 @@ create table spot (
 	UNIQUE (branchID, spotNumber),
 	foreign key(branchID) references branch(branchID)
 );
-create table parkingTicket (
+create table parking_ticket (
 	ticketID serial primary key,
 	vehicleID int not null,
 	spotID int not null,
