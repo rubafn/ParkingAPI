@@ -22,6 +22,18 @@ public class GlobalHandler {
     }
     @ExceptionHandler(AlreadyParkedException.class)
     public ResponseEntity<String> handleAlreadyParked(AlreadyParkedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+    @ExceptionHandler(SpotAlreadyExistsException.class)
+    public ResponseEntity<String> handleAlreadyExistingSpot(SpotAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+    @ExceptionHandler(DoesNotExistException.class)
+    public ResponseEntity<String> handleNonExistent(DoesNotExistException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+    @ExceptionHandler(InvalidVehicleTypeException.class)
+    public ResponseEntity<String> handleInvalidType(InvalidVehicleTypeException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }

@@ -13,9 +13,12 @@ import com.example.parking.DTO.VehicleEntryRequest;
 import com.example.parking.DTO.VehicleEntryResponse;
 import com.example.parking.DTO.VehicleExitResponse;
 import com.example.parking.Exceptions.AlreadyParkedException;
+import com.example.parking.Exceptions.DoesNotExistException;
+import com.example.parking.Exceptions.InvalidVehicleTypeException;
 import com.example.parking.Exceptions.NoAvailableSpotsException;
 import com.example.parking.Exceptions.NoTicketFoundException;
 import com.example.parking.Exceptions.NoVehicleFoundException;
+import com.example.parking.Exceptions.SpotAlreadyExistsException;
 import com.example.parking.Repository.BranchRepository;
 import com.example.parking.Repository.SpotRepository;
 import com.example.parking.Repository.TicketRepository;
@@ -124,13 +127,13 @@ public class ParkingService {
     public Spot addNewSpot(SpotAddRequest request){
         Branch branch = branchRepo.findById(request.getBranchId()).get();
         if(branch == null){
-            //throw exception branch doesnt exist
+            throw new DoesNotExistException("Branch Does Not Exist");
         }
 
         Spot spot = spotRepo.findBySpotNumberAndBranchId(request.getSpotNumber(),request.getBranchId());
 
         if(spot!=null){
-            //throw exception duplicate
+            throw new SpotAlreadyExistsException("Another spot number already exists in same branch");
         }
 
         spot = new Spot();
@@ -143,19 +146,19 @@ public class ParkingService {
     public Spot UpdateSpot(int id, SpotUpdateRequest request){
         Spot spot = spotRepo.findById(id).get();
         if(spot==null){
-            //throw exception
+            throw new DoesNotExistException("Spot Id does not exist");
         }
 
         if(request.getSpotNumber()!=0){
             Spot s = spotRepo.findBySpotNumberAndBranchId(request.getSpotNumber(), spot.getBranch().getBranchId());
             if(s!= null){
-                //throw exception duplicate 
+                throw new SpotAlreadyExistsException("Another Spot number already exists in same branch");
             }
             spot.setSpotNumber(request.getSpotNumber());
         }
         if(!request.getType().equals(null)){
             if(!request.getType().equals(VehicleType.CAR)&&!request.getType().equals(VehicleType.TRUCK)&&!request.getType().equals(VehicleType.MOTORCYCLE)){
-                //throw invalid type exception
+                throw new InvalidVehicleTypeException("Spot Vehicle Type is invalid");
             }
             spot.setType(request.getType());
         }
