@@ -10,6 +10,7 @@ import com.example.parking.DTO.VehicleEntryRequest;
 import com.example.parking.DTO.VehicleEntryResponse;
 import com.example.parking.DTO.VehicleExitResponse;
 import com.example.parking.Service.ParkingService;
+import com.example.parking.model.Branch;
 import com.example.parking.model.ParkingTicket;
 import com.example.parking.model.Spot;
 import com.example.parking.model.Vehicle;
@@ -75,6 +76,11 @@ public class ParkingController {
     @PatchMapping("/spots/{id}")
     public Spot UpdateSpot(@PathVariable int id, @RequestBody SpotUpdateRequest request){
         return this.service.UpdateSpot(id, request);
+    }
+    
+    @PostMapping("/branches")
+    public Branch addBranch(@RequestBody String location) {
+        return this.service.addBranch(location);
     }
     
 }

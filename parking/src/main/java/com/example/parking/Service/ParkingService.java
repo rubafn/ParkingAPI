@@ -14,6 +14,7 @@ import com.example.parking.DTO.VehicleEntryResponse;
 import com.example.parking.DTO.VehicleExitResponse;
 import com.example.parking.Exceptions.AlreadyParkedException;
 import com.example.parking.Exceptions.DoesNotExistException;
+import com.example.parking.Exceptions.DuplicateEntityException;
 import com.example.parking.Exceptions.InvalidVehicleTypeException;
 import com.example.parking.Exceptions.NoAvailableSpotsException;
 import com.example.parking.Exceptions.NoTicketFoundException;
@@ -166,5 +167,15 @@ public class ParkingService {
             spot.setAvailable(request.getAvailable().booleanValue());
         }
         return this.spotRepo.save(spot);
+    }
+    public Branch addBranch(String location){
+        Branch b = branchRepo.findByLocation(location);
+
+        if(b!=null){
+            throw new DuplicateEntityException("There is already a branch in that location");
+        }
+        b = new Branch();
+        b.setLocation(location);
+        return this.branchRepo.save(b);
     }
 }

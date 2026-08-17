@@ -36,4 +36,8 @@ public class GlobalHandler {
     public ResponseEntity<String> handleInvalidType(InvalidVehicleTypeException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+    @ExceptionHandler(DuplicateEntityException.class)
+    public ResponseEntity<String> handleDuplicateEntity(DuplicateEntityException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
 }
