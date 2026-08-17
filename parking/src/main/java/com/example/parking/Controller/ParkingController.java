@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.parking.VehicleType;
 import com.example.parking.DTO.SpotAddRequest;
+import com.example.parking.DTO.SpotUpdateRequest;
 import com.example.parking.DTO.VehicleEntryRequest;
 import com.example.parking.DTO.VehicleEntryResponse;
 import com.example.parking.DTO.VehicleExitResponse;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 
 
@@ -67,8 +69,12 @@ public class ParkingController {
     }
 
     @PostMapping("/spots")
-    public Spot addNewSpot(SpotAddRequest request) {
+    public Spot addNewSpot(@RequestBody SpotAddRequest request) {
         return this.service.addNewSpot(request);
+    }
+    @PatchMapping("/spots/{id}")
+    public Spot UpdateSpot(@PathVariable int id, @RequestBody SpotUpdateRequest request){
+        return this.service.UpdateSpot(id, request);
     }
     
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.parking.VehicleType;
 import com.example.parking.DTO.SpotAddRequest;
+import com.example.parking.DTO.SpotUpdateRequest;
 import com.example.parking.DTO.VehicleEntryRequest;
 import com.example.parking.DTO.VehicleEntryResponse;
 import com.example.parking.DTO.VehicleExitResponse;
@@ -129,13 +130,38 @@ public class ParkingService {
         Spot spot = spotRepo.findBySpotNumberAndBranchId(request.getSpotNumber(),request.getBranchId());
 
         if(spot!=null){
-            //throw exception
+            //throw exception duplicate
         }
 
         spot = new Spot();
         spot.setBranch(branch);
         spot.setSpotNumber(request.getSpotNumber());
         spot.setType(request.getType());
+        return this.spotRepo.save(spot);
+    }
+
+    public Spot UpdateSpot(int id, SpotUpdateRequest request){
+        Spot spot = spotRepo.findById(id).get();
+        if(spot==null){
+            //throw exception
+        }
+
+        if(request.getSpotNumber()!=0){
+            Spot s = spotRepo.findBySpotNumberAndBranchId(request.getSpotNumber(), spot.getBranch().getBranchId());
+            if(s!= null){
+                //throw exception duplicate 
+            }
+            spot.setSpotNumber(request.getSpotNumber());
+        }
+        if(!request.getType().equals(null)){
+            if(!request.getType().equals(VehicleType.CAR)&&!request.getType().equals(VehicleType.TRUCK)&&!request.getType().equals(VehicleType.MOTORCYCLE)){
+                //throw invalid type exception
+            }
+            spot.setType(request.getType());
+        }
+        if(!request.getAvailable().equals(null)){
+            spot.setAvailable(request.getAvailable().booleanValue());
+        }
         return this.spotRepo.save(spot);
     }
 }
