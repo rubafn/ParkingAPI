@@ -10,4 +10,5 @@ import com.example.parking.model.Spot;
 public interface SpotRepository extends JpaRepository<Spot, Integer>{
     Spot findFirstByTypeAndIsAvailableTrue(VehicleType type);
     List<Spot> findAllByIsAvailableTrue();
+    Spot findBySpotNumberAndBranchId(int spotNumber, int branchId);
 }

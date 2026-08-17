@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.parking.VehicleType;
+import com.example.parking.DTO.SpotAddRequest;
 import com.example.parking.DTO.VehicleEntryRequest;
 import com.example.parking.DTO.VehicleEntryResponse;
 import com.example.parking.DTO.VehicleExitResponse;
@@ -14,11 +15,13 @@ import com.example.parking.Exceptions.AlreadyParkedException;
 import com.example.parking.Exceptions.NoAvailableSpotsException;
 import com.example.parking.Exceptions.NoTicketFoundException;
 import com.example.parking.Exceptions.NoVehicleFoundException;
+import com.example.parking.Repository.BranchRepository;
 import com.example.parking.Repository.SpotRepository;
 import com.example.parking.Repository.TicketRepository;
 import com.example.parking.Repository.VehicleRepository;
 import com.example.parking.Strategy.FeeStrategy;
 import com.example.parking.Strategy.TypesFeeStrategy;
+import com.example.parking.model.Branch;
 import com.example.parking.model.ParkingTicket;
 import com.example.parking.model.Spot;
 import com.example.parking.model.Vehicle;
@@ -28,11 +31,13 @@ public class ParkingService {
     private final VehicleRepository vehicleRepo;
     private final SpotRepository spotRepo;
     private final TicketRepository ticketRepo;
+    private final BranchRepository branchRepo;
 
-    public ParkingService(VehicleRepository vehicleRepo, SpotRepository spotRepo, TicketRepository ticketRepo){
+    public ParkingService(VehicleRepository vehicleRepo, SpotRepository spotRepo, TicketRepository ticketRepo, BranchRepository branchRepo){
         this.spotRepo = spotRepo;
         this.vehicleRepo = vehicleRepo;
         this.ticketRepo = ticketRepo;
+        this.branchRepo= branchRepo;
     }
 
     public VehicleEntryResponse enterVehicle(VehicleEntryRequest request){
@@ -115,4 +120,22 @@ public class ParkingService {
         return this.ticketRepo.findAllByExitTimeIsNull();
     }
 
+    public Spot addNewSpot(SpotAddRequest request){
+        Branch branch = branchRepo.findById(request.getBranchId()).get();
+        if(branch == null){
+            //throw exception branch doesnt exist
+        }
+
+        Spot spot = spotRepo.findBySpotNumberAndBranchId(request.getSpotNumber(),request.getBranchId());
+
+        if(spot!=null){
+            //throw exception
+        }
+
+        spot = new Spot();
+        spot.setBranch(branch);
+        spot.setSpotNumber(request.getSpotNumber());
+        spot.setType(request.getType());
+        return this.spotRepo.save(spot);
+    }
 }

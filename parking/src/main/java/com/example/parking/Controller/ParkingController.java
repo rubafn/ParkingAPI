@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.parking.VehicleType;
+import com.example.parking.DTO.SpotAddRequest;
 import com.example.parking.DTO.VehicleEntryRequest;
 import com.example.parking.DTO.VehicleEntryResponse;
 import com.example.parking.DTO.VehicleExitResponse;
@@ -64,4 +65,10 @@ public class ParkingController {
     public List<ParkingTicket> getAllOngoingTickets(){
         return this.service.findAllOngoingTickets();
     }
+
+    @PostMapping("/spots")
+    public Spot addNewSpot(SpotAddRequest request) {
+        return this.service.addNewSpot(request);
+    }
+    
 }
