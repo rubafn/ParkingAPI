@@ -3,7 +3,6 @@ package com.example.parking.DTO;
 import java.time.LocalDateTime;
 
 public class VehicleEntryResponse {
-    
     private String licencePlate;
     private int branchId;
     private int assignedSpot;
