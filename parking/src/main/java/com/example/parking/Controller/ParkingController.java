@@ -8,6 +8,7 @@ import com.example.parking.DTO.SpotAddRequest;
 import com.example.parking.DTO.SpotUpdateRequest;
 import com.example.parking.DTO.VehicleEntryRequest;
 import com.example.parking.DTO.VehicleEntryResponse;
+import com.example.parking.DTO.VehicleExitRequest;
 import com.example.parking.DTO.VehicleExitResponse;
 import com.example.parking.Service.ParkingService;
 import com.example.parking.model.Branch;
@@ -41,8 +42,8 @@ public class ParkingController {
         return this.service.enterVehicle(request);
     }
     @PostMapping("/exit/{plateNumber}")
-    public VehicleExitResponse exitVehicle(@PathVariable String plateNumber) {
-        return this.service.exitVehicle(plateNumber);
+    public VehicleExitResponse exitVehicle(@PathVariable String plateNumber,VehicleExitRequest request) {
+        return this.service.exitVehicle(plateNumber,request);
     }
     @GetMapping("/spots")
     public List<Spot> getAllSpots() {

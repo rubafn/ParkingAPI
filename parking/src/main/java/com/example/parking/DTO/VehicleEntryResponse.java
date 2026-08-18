@@ -5,10 +5,12 @@ import java.time.LocalDateTime;
 public class VehicleEntryResponse {
     
     private String licencePlate;
+    private int branchId;
     private int assignedSpot;
     private LocalDateTime entryTime;
 
-    public VehicleEntryResponse(String licencePlate, int assignedSpot, LocalDateTime entry){
+    public VehicleEntryResponse(int branchId, String licencePlate, int assignedSpot, LocalDateTime entry){
+        this.branchId=branchId;
         this.licencePlate= licencePlate;
         this.assignedSpot=assignedSpot;
         this.entryTime = entry;
@@ -35,6 +37,12 @@ public class VehicleEntryResponse {
 
     public void setEntryTime(LocalDateTime entryTime) {
         this.entryTime = entryTime;
+    }
+    public int getBranchId() {
+        return branchId;
+    }
+    public void setBranchId(int branchId) {
+        this.branchId = branchId;
     }
 
     

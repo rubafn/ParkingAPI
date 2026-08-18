@@ -11,6 +11,7 @@ import com.example.parking.DTO.SpotAddRequest;
 import com.example.parking.DTO.SpotUpdateRequest;
 import com.example.parking.DTO.VehicleEntryRequest;
 import com.example.parking.DTO.VehicleEntryResponse;
+import com.example.parking.DTO.VehicleExitRequest;
 import com.example.parking.DTO.VehicleExitResponse;
 import com.example.parking.Exceptions.AlreadyParkedException;
 import com.example.parking.Exceptions.DoesNotExistException;
@@ -49,12 +50,6 @@ public class ParkingService {
         String plate = request.getLicencePlate();
         VehicleType type = request.getVehicleType();
 
-        //check for available spots with the suitable type 
-        Spot spot = spotRepo.findFirstByTypeAndIsAvailableTrue(type);
-        //no available spots
-        if(spot==null){
-            throw new NoAvailableSpotsException("No spots are available for this vehicle type");
-        }
         //create new vehicle or use existing vehicle
         Vehicle vehicle = vehicleRepo.findByLicencePlate(plate);
 
@@ -68,6 +63,12 @@ public class ParkingService {
         if(ticket != null){
             throw new AlreadyParkedException("Vehicle Already has an ongoing ticket that didn't exit");
         }
+        //check for available spots with the suitable type 
+        Spot spot = spotRepo.findFirstByTypeAndBranchBranchIdAndIsAvailableTrue(type,request.getBranchId());
+        //no available spots
+        if(spot==null){
+            throw new NoAvailableSpotsException("No spots are available for this vehicle type");
+        }
         spot.setAvailable(false);
         spotRepo.save(spot);
 
@@ -77,10 +78,10 @@ public class ParkingService {
         ticket.setEntryTime(LocalDateTime.now());
         ticketRepo.save(ticket);
 
-        return new VehicleEntryResponse(plate, spot.getSpotNumber(), LocalDateTime.now());
+        return new VehicleEntryResponse(request.getBranchId(),plate, spot.getSpotNumber(), LocalDateTime.now());
     }
 
-    public VehicleExitResponse exitVehicle(String plate){
+    public VehicleExitResponse exitVehicle(String plate, VehicleExitRequest request){
         Vehicle vehicle = vehicleRepo.findByLicencePlate(plate);
 
         if(vehicle == null){//vehicle doesnt have a ticket
@@ -89,6 +90,10 @@ public class ParkingService {
         ParkingTicket ticket = ticketRepo.findByVehicleVehicleIdAndExitTimeIsNull(vehicle.getVehicleId());
         if(ticket == null){
             throw new NoTicketFoundException("Ticket either doesn't exist or already exited");
+        }
+        Branch branch = branchRepo.findById(request.getBranchId()).orElseThrow(() -> new DoesNotExistException("Branch does not exist"));
+        if(!ticket.getSpot().getBranch().equals(branch)){
+            throw new NoTicketFoundException("Ticket doesn't belong to this branch");
         }
         ticket.setExitTime(LocalDateTime.now());
         Long duration = Duration.between(ticket.getEntryTime(), ticket.getExitTime()).toMinutes();
@@ -126,12 +131,10 @@ public class ParkingService {
     }
 
     public Spot addNewSpot(SpotAddRequest request){
-        Branch branch = branchRepo.findById(request.getBranchId()).get();
-        if(branch == null){
-            throw new DoesNotExistException("Branch Does Not Exist");
-        }
+        Branch branch = branchRepo.findById(request.getBranchId())
+        .orElseThrow(() -> new DoesNotExistException("Branch does not exist"));
 
-        Spot spot = spotRepo.findBySpotNumberAndBranchId(request.getSpotNumber(),request.getBranchId());
+        Spot spot = spotRepo.findBySpotNumberAndBranchBranchId(request.getSpotNumber(),request.getBranchId());
 
         if(spot!=null){
             throw new SpotAlreadyExistsException("Another spot number already exists in same branch");
@@ -145,25 +148,23 @@ public class ParkingService {
     }
 
     public Spot UpdateSpot(int id, SpotUpdateRequest request){
-        Spot spot = spotRepo.findById(id).get();
-        if(spot==null){
-            throw new DoesNotExistException("Spot Id does not exist");
-        }
+        Spot spot = spotRepo.findById(id).orElseThrow(() -> new DoesNotExistException("Spot id does not exist"));
+        
 
         if(request.getSpotNumber()!=0){
-            Spot s = spotRepo.findBySpotNumberAndBranchId(request.getSpotNumber(), spot.getBranch().getBranchId());
-            if(s!= null){
+            Spot s = spotRepo.findBySpotNumberAndBranchBranchId(request.getSpotNumber(), spot.getBranch().getBranchId());
+            if(s!= null&& s.getSpotId() != spot.getSpotId()){
                 throw new SpotAlreadyExistsException("Another Spot number already exists in same branch");
             }
             spot.setSpotNumber(request.getSpotNumber());
         }
-        if(!request.getType().equals(null)){
+        if(request.getType()!= null){
             if(!request.getType().equals(VehicleType.CAR)&&!request.getType().equals(VehicleType.TRUCK)&&!request.getType().equals(VehicleType.MOTORCYCLE)){
                 throw new InvalidVehicleTypeException("Spot Vehicle Type is invalid");
             }
             spot.setType(request.getType());
         }
-        if(!request.getAvailable().equals(null)){
+        if(request.getAvailable()!=null){
             spot.setAvailable(request.getAvailable().booleanValue());
         }
         return this.spotRepo.save(spot);

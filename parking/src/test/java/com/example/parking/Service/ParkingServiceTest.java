@@ -7,8 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyInt;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,14 +21,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.parking.VehicleType;
 import com.example.parking.DTO.VehicleEntryRequest;
 import com.example.parking.DTO.VehicleEntryResponse;
+import com.example.parking.DTO.VehicleExitRequest;
 import com.example.parking.DTO.VehicleExitResponse;
 import com.example.parking.Exceptions.AlreadyParkedException;
 import com.example.parking.Exceptions.NoAvailableSpotsException;
 import com.example.parking.Exceptions.NoTicketFoundException;
 import com.example.parking.Exceptions.NoVehicleFoundException;
+import com.example.parking.Repository.BranchRepository;
 import com.example.parking.Repository.SpotRepository;
 import com.example.parking.Repository.TicketRepository;
 import com.example.parking.Repository.VehicleRepository;
+import com.example.parking.model.Branch;
 import com.example.parking.model.ParkingTicket;
 import com.example.parking.model.Spot;
 import com.example.parking.model.Vehicle;
@@ -42,6 +47,9 @@ public class ParkingServiceTest {
     @Mock
     private TicketRepository ticketRepository;
 
+    @Mock
+    private BranchRepository branchRepository;
+
 
     @InjectMocks
     private ParkingService parkingService;
@@ -56,21 +64,11 @@ public class ParkingServiceTest {
         v.setLicencePlate("12345");
         v.setType(VehicleType.TRUCK);
 
-        // Available truck spot
-        Spot s = new Spot();
-        s.setAvailable(true);
-        s.setSpotNumber(199);
-        s.setType(VehicleType.TRUCK);
 
         // Existing active ticket
         ParkingTicket ticket = new ParkingTicket();
         ticket.setEntryTime(LocalDateTime.now());
         ticket.setVehicle(v);
-        ticket.setSpot(s);
-
-        // Tell mock spot repository that a spot exists
-        when(spotRepository.findFirstByTypeAndIsAvailableTrue(VehicleType.TRUCK))
-                .thenReturn(s);
 
         // Tell mock vehicle repository that the vehicle exists
         when(vehicleRepository.findByLicencePlate("12345"))
@@ -83,6 +81,7 @@ public class ParkingServiceTest {
         VehicleEntryRequest request = new VehicleEntryRequest();
         request.setLicencePlate("12345");
         request.setVehicleType(VehicleType.TRUCK);
+        request.setBranchId(1);
 
         assertThrows(
                 AlreadyParkedException.class,
@@ -103,7 +102,7 @@ public class ParkingServiceTest {
         s.setSpotNumber(199);
         s.setType(VehicleType.TRUCK);
 
-         when(spotRepository.findFirstByTypeAndIsAvailableTrue(VehicleType.TRUCK))
+         when(spotRepository.findFirstByTypeAndBranchBranchIdAndIsAvailableTrue(VehicleType.TRUCK,1))
                 .thenReturn(s);
 
         // Tell mock vehicle repository that the vehicle exists
@@ -117,6 +116,7 @@ public class ParkingServiceTest {
         VehicleEntryRequest request = new VehicleEntryRequest();
         request.setLicencePlate("12345");
         request.setVehicleType(VehicleType.TRUCK);
+        request.setBranchId(1);
 
          VehicleEntryResponse response =
             parkingService.enterVehicle(request);
@@ -131,12 +131,13 @@ public class ParkingServiceTest {
 
     @Test
     void VehicleEntryTest_noAvailableSpots(){
-        when(spotRepository.findFirstByTypeAndIsAvailableTrue(VehicleType.MOTORCYCLE))
+        when(spotRepository.findFirstByTypeAndBranchBranchIdAndIsAvailableTrue(VehicleType.MOTORCYCLE,1))
             .thenReturn(null);
 
         VehicleEntryRequest request = new VehicleEntryRequest();
         request.setLicencePlate("12345");
         request.setVehicleType(VehicleType.MOTORCYCLE);
+        request.setBranchId(1);
 
         assertThrows(
                 NoAvailableSpotsException.class,
@@ -164,6 +165,14 @@ public class ParkingServiceTest {
         ticket.setVehicle(v);
         ticket.setSpot(s);
 
+        Branch branch = new Branch();
+        branch.setLocation("Ramallah");
+
+        when(branchRepository.findById(anyInt()))
+                .thenReturn(Optional.of(branch));
+
+        s.setBranch(branch);
+
         // Tell mock vehicle repository that the vehicle exists
         when(vehicleRepository.findByLicencePlate("12345"))
                 .thenReturn(v);
@@ -172,7 +181,8 @@ public class ParkingServiceTest {
         when(ticketRepository.findByVehicleVehicleIdAndExitTimeIsNull(v.getVehicleId()))
                 .thenReturn(ticket);
 
-        VehicleExitResponse response = parkingService.exitVehicle("12345");
+
+        VehicleExitResponse response = parkingService.exitVehicle("12345", new VehicleExitRequest(branch.getBranchId()));
 
         assertTrue(s.isAvailable());
 
@@ -197,13 +207,13 @@ public class ParkingServiceTest {
         when(ticketRepository.findByVehicleVehicleIdAndExitTimeIsNull(v.getVehicleId()))
                 .thenReturn(null);
 
-        assertThrows(NoTicketFoundException.class, () -> parkingService.exitVehicle("12345"));
+        assertThrows(NoTicketFoundException.class, () -> parkingService.exitVehicle("12345", new VehicleExitRequest(1)));
     }
 
     @Test
     void VehicleExitTest_vehicleDoesNotExist(){
          when(vehicleRepository.findByLicencePlate("12345"))
                 .thenReturn(null);
-        assertThrows(NoVehicleFoundException.class, ()-> parkingService.exitVehicle("12345"));
+        assertThrows(NoVehicleFoundException.class, ()-> parkingService.exitVehicle("12345", new VehicleExitRequest(1)));
     }
 }
