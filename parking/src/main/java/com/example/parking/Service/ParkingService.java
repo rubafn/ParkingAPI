@@ -24,6 +24,7 @@ import com.example.parking.Exceptions.SpotAlreadyExistsException;
 import com.example.parking.Repository.BranchRepository;
 import com.example.parking.Repository.SpotRepository;
 import com.example.parking.Repository.TicketRepository;
+import com.example.parking.Repository.UserRepository;
 import com.example.parking.Repository.VehicleRepository;
 import com.example.parking.Strategy.FeeStrategy;
 import com.example.parking.Strategy.TypesFeeStrategy;
@@ -38,15 +39,21 @@ public class ParkingService {
     private final SpotRepository spotRepo;
     private final TicketRepository ticketRepo;
     private final BranchRepository branchRepo;
+    private final UserRepository userRepo;
 
-    public ParkingService(VehicleRepository vehicleRepo, SpotRepository spotRepo, TicketRepository ticketRepo, BranchRepository branchRepo){
+    public ParkingService(VehicleRepository vehicleRepo, SpotRepository spotRepo, TicketRepository ticketRepo, BranchRepository branchRepo, UserRepository userRepo){
         this.spotRepo = spotRepo;
         this.vehicleRepo = vehicleRepo;
         this.ticketRepo = ticketRepo;
         this.branchRepo= branchRepo;
+        this.userRepo = userRepo;
     }
 
     public VehicleEntryResponse enterVehicle(VehicleEntryRequest request){
+        //see if user exists
+        //see if user is logged
+
+
         String plate = request.getLicencePlate();
         VehicleType type = request.getVehicleType();
 
@@ -82,6 +89,10 @@ public class ParkingService {
     }
 
     public VehicleExitResponse exitVehicle(String plate, VehicleExitRequest request){
+        //see if user exists
+        //see if user is logged
+
+
         Vehicle vehicle = vehicleRepo.findByLicencePlate(plate);
 
         if(vehicle == null){//vehicle doesnt have a ticket
@@ -124,6 +135,7 @@ public class ParkingService {
         return this.vehicleRepo.findAllByType(type);
     }
     public List<ParkingTicket> findAllTickets(){
+        //maybe add an admin check here
         return this.ticketRepo.findAll();
     }
     public List<ParkingTicket> findAllOngoingTickets(){
@@ -131,8 +143,12 @@ public class ParkingService {
     }
 
     public Spot addNewSpot(SpotAddRequest request){
-        Branch branch = branchRepo.findById(request.getBranchId())
-        .orElseThrow(() -> new DoesNotExistException("Branch does not exist"));
+        //see if user is logged in 
+
+
+            //throw exception no allowed 401
+
+        Branch branch = branchRepo.findById(request.getBranchId()).orElseThrow(() -> new DoesNotExistException("Branch does not exist"));
 
         Spot spot = spotRepo.findBySpotNumberAndBranchBranchId(request.getSpotNumber(),request.getBranchId());
 
@@ -148,9 +164,12 @@ public class ParkingService {
     }
 
     public Spot UpdateSpot(int id, SpotUpdateRequest request){
+        //see if user is logged in 
+
+        
+            //throw exception no allowed 401
         Spot spot = spotRepo.findById(id).orElseThrow(() -> new DoesNotExistException("Spot id does not exist"));
         
-
         if(request.getSpotNumber()!=0){
             Spot s = spotRepo.findBySpotNumberAndBranchBranchId(request.getSpotNumber(), spot.getBranch().getBranchId());
             if(s!= null&& s.getSpotId() != spot.getSpotId()){
@@ -170,6 +189,7 @@ public class ParkingService {
         return this.spotRepo.save(spot);
     }
     public Branch addBranch(String location){
+        //check if theres a user, if they are logged in, and if they are a admin
         Branch b = branchRepo.findByLocation(location);
 
         if(b!=null){

@@ -43,6 +43,4 @@ public class VehicleEntryResponse {
     public void setBranchId(int branchId) {
         this.branchId = branchId;
     }
-
-    
 }

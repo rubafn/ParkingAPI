@@ -30,6 +30,4 @@ public class SpotUpdateRequest {
     public void setSpotNumber(int spotNumber) {
         this.spotNumber = spotNumber;
     }
-
-    
 }

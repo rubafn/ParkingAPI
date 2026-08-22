@@ -19,5 +19,4 @@ public class VehicleExitRequest {
         this.branchId = branchId;
     }
 
-    
 }
