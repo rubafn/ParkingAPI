@@ -3,6 +3,8 @@ package com.example.parking.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,12 @@ import com.example.parking.model.Vehicle;
 
 @Service
 public class ParkingService {
+    //TODO: add getting the currently logged in user from the token so we can add it to the new parking ticket and stuff
+    //TODO: check that updating a spot for admin works
+    //TODO: check that the pattern validation works
+    //TODO: make pagination
+    //TODO: add a searching endpoint
+    //TODO: check that spot number pattern validation works
     private final VehicleRepository vehicleRepo;
     private final SpotRepository spotRepo;
     private final TicketRepository ticketRepo;
@@ -107,24 +115,23 @@ public class ParkingService {
 
         return new VehicleExitResponse(plate, ticket.getEntryTime(), ticket.getExitTime(), (double)(duration/60.0), fee);
     }
-    public List<Spot> getAllSpots(){
-        return this.spotRepo.findAll();
+    public Page<Spot> getAllSpots(Pageable pageable){
+        return this.spotRepo.findAll(pageable);
     }
-    public List<Spot> getAvailableSpots(){
-        return this.spotRepo.findAllByIsAvailableTrue();
+    public Page<Spot> getAvailableSpots(Pageable pageable){
+        return this.spotRepo.findAllByIsAvailableTrue(pageable);
     }
-
-    public List<Vehicle> findAllVehicles() {
-        return this.vehicleRepo.findAll();
+    public Page<Vehicle> findAllVehicles(Pageable pageable) {
+        return this.vehicleRepo.findAll(pageable);
     }
-    public List<Vehicle> findAllVehiclesByType(VehicleType type){
-        return this.vehicleRepo.findAllByType(type);
+    public Page<Vehicle> findAllVehiclesByType(VehicleType type, Pageable pageable) {
+        return this.vehicleRepo.findAllByType(type, pageable);
     }
-    public List<ParkingTicket> findAllTickets(){
-        return this.ticketRepo.findAll();
+    public Page<ParkingTicket> findAllTickets(Pageable pageable){
+        return this.ticketRepo.findAll(pageable);
     }
-    public List<ParkingTicket> findAllOngoingTickets(){
-        return this.ticketRepo.findAllByExitTimeIsNull();
+    public Page<ParkingTicket> findAllOngoingTickets(Pageable pageable){
+        return this.ticketRepo.findAllByExitTimeIsNull(pageable);
     }
 
     public Spot addNewSpot(SpotAddRequest request){

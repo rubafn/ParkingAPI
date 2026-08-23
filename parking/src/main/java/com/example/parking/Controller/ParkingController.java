@@ -22,13 +22,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-
-
-
 
 @RestController
 @RequestMapping("/api/parking")
@@ -49,28 +47,28 @@ public class ParkingController {
         return this.service.exitVehicle(plateNumber,request);
     }
     @GetMapping("/spots")
-    public List<Spot> getAllSpots() {
-        return this.service.getAllSpots();
+    public Page<Spot> getAllSpots(Pageable pageable) {
+        return this.service.getAllSpots(pageable);
     }
     @GetMapping("/spots/available")
-    public List<Spot> getAvailableSpots(){
-        return this.service.getAvailableSpots();
+    public Page<Spot> getAvailableSpots(Pageable pageable){
+        return this.service.getAvailableSpots(pageable);
     }
     @GetMapping("/vehicles")
-    public List<Vehicle> getAllVehicles(){
-        return this.service.findAllVehicles();
+    public Page<Vehicle> getAllVehicles(Pageable pageable){
+        return this.service.findAllVehicles(pageable);
     }
     @GetMapping("/vehicles/{type}")
-    public List<Vehicle> getAllVehiclesByType(@PathVariable VehicleType type){
-        return this.service.findAllVehiclesByType(type);
+    public Page<Vehicle> getAllVehiclesByType(@PathVariable VehicleType type,Pageable pageable){
+        return this.service.findAllVehiclesByType(type, pageable);
     }
     @GetMapping("/tickets")
-    public List<ParkingTicket> getAllTickets(){
-        return this.service.findAllTickets();
+    public Page<ParkingTicket> getAllTickets(Pageable pageable){
+        return this.service.findAllTickets(pageable);
     }
     @GetMapping("/tickets/Ongoing")
-    public List<ParkingTicket> getAllOngoingTickets(){
-        return this.service.findAllOngoingTickets();
+    public Page<ParkingTicket> getAllOngoingTickets(Pageable pageable){
+        return this.service.findAllOngoingTickets(pageable);
     }
 
     @PostMapping("/spots")
