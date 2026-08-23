@@ -32,6 +32,6 @@ public class UserController {
     }
     @GetMapping
     public Page<UserResponse> getAllUsers(Pageable pageable){
-        return userService.getAllUsers();
+        return userService.getAllUsers(pageable);
     }
 }
