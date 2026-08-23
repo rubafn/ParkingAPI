@@ -1,14 +1,17 @@
 package com.example.parking.Controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.parking.DTO.AuthResponse;
+import com.example.parking.DTO.LoginRequest;
 import com.example.parking.DTO.RegisterRequest;
 import com.example.parking.Service.AuthService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -21,7 +24,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public AuthResponse register(@RequestBody RegisterRequest request){
+    public AuthResponse register(@Valid @RequestBody RegisterRequest request){
         return this.authService.register(request);
+    }
+    @PostMapping("/login")
+    public AuthResponse login(@Valid @RequestBody LoginRequest request) {
+
+        return this.authService.login(request);
     }
 }

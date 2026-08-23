@@ -36,6 +36,8 @@ import com.example.parking.model.ParkingTicket;
 import com.example.parking.model.Spot;
 import com.example.parking.model.Vehicle;
 
+//TODO: fix tests (user related)
+
 @ExtendWith(MockitoExtension.class)//this is to create mock repositories for testing
 public class ParkingServiceTest {
     @Mock

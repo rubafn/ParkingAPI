@@ -16,6 +16,8 @@ import com.example.parking.model.ParkingTicket;
 import com.example.parking.model.Spot;
 import com.example.parking.model.Vehicle;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 
 @RestController
 @RequestMapping("/api/parking")
+@SecurityRequirement(name = "bearerAuth")
 public class ParkingController {
     private final ParkingService service;
 

@@ -10,7 +10,10 @@ public class LoginRequest {
 
     @NotBlank
     @Size(min = 6, max = 60)
-    @Pattern(regexp = "^[A-Za-z](?=.*\\d)[A-Za-z\\d]*$", message = "Password must start with a letter and contain at least one number")
+    @Pattern(
+        regexp = "^[A-Za-z](?=.*\\d)(?=.*[^A-Za-z\\d]).*$",
+        message = "Password must start with a letter and contain at least one number and one special character"
+    )
     private String password;
 
     public String getUsername() {

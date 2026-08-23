@@ -22,7 +22,7 @@ public class Users {
     private String password;
     
     @Enumerated(EnumType.STRING)
-    private UserType type;
+    private UserType role;
 
 
     public int getUserId() {
@@ -40,11 +40,11 @@ public class Users {
     public void setPassword(String password) {
         this.password = password;
     }
-    public UserType getType() {
-        return type;
+    public UserType getRole() {
+        return role;
     }
-    public void setType(UserType type) {
-        this.type = type;
+    public void setRole(UserType type) {
+        this.role = type;
     }
 
     
