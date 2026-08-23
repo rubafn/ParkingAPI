@@ -2,6 +2,8 @@ package com.example.parking.Controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,7 +31,7 @@ public class UserController {
         return userService.makeAdmin(username);
     }
     @GetMapping
-    public List<UserResponse> getAllUsers(){
+    public Page<UserResponse> getAllUsers(Pageable pageable){
         return userService.getAllUsers();
     }
 }

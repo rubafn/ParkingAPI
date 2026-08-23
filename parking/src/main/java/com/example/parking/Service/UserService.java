@@ -1,8 +1,7 @@
 package com.example.parking.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.parking.Exceptions.DoesNotExistException;
@@ -29,11 +28,9 @@ public class UserService {
         userRepository.save(user);
         return new UserResponse(user.getUsername(), user.getRole());
     }
-    public List<UserResponse> getAllUsers() {
+    public Page<UserResponse> getAllUsers(Pageable pageable) {
 
-        return userRepository.findAll()
-                .stream()
-                .map(user -> new UserResponse(user.getUsername(),user.getRole()))
-                .collect(Collectors.toList());
+        return userRepository.findAll(pageable)
+                .map(user -> new UserResponse(user.getUsername(),user.getRole()));
     }
 }
