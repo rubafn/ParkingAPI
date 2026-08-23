@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.parking.VehicleType;
@@ -26,32 +27,35 @@ import com.example.parking.Exceptions.SpotAlreadyExistsException;
 import com.example.parking.Repository.BranchRepository;
 import com.example.parking.Repository.SpotRepository;
 import com.example.parking.Repository.TicketRepository;
+import com.example.parking.Repository.UserRepository;
 import com.example.parking.Repository.VehicleRepository;
 import com.example.parking.Strategy.FeeStrategy;
 import com.example.parking.Strategy.TypesFeeStrategy;
 import com.example.parking.model.Branch;
 import com.example.parking.model.ParkingTicket;
 import com.example.parking.model.Spot;
+import com.example.parking.model.Users;
 import com.example.parking.model.Vehicle;
 
 @Service
 public class ParkingService {
-    //TODO: add getting the currently logged in user from the token so we can add it to the new parking ticket and stuff
-    //TODO: check that updating a spot for admin works
-    //TODO: check that the pattern validation works
-    //TODO: make pagination
-    //TODO: add a searching endpoint
-    //TODO: check that spot number pattern validation works
+    // TODO: add getting the currently logged in user from the token so we can add it to the new parking ticket and stuff
+    // TODO: check that updating a spot for admin works
+    // TODO: check that the pattern validation works
+    // TODO: add a searching endpoint
+    // TODO: check that spot number pattern validation works
     private final VehicleRepository vehicleRepo;
     private final SpotRepository spotRepo;
     private final TicketRepository ticketRepo;
     private final BranchRepository branchRepo;
+    private final UserRepository userRepo;
 
-    public ParkingService(VehicleRepository vehicleRepo, SpotRepository spotRepo, TicketRepository ticketRepo, BranchRepository branchRepo){
+    public ParkingService(VehicleRepository vehicleRepo, SpotRepository spotRepo, TicketRepository ticketRepo, BranchRepository branchRepo,UserRepository userRepo){
         this.spotRepo = spotRepo;
         this.vehicleRepo = vehicleRepo;
         this.ticketRepo = ticketRepo;
         this.branchRepo= branchRepo;
+        this.userRepo = userRepo;
     }
 
     public VehicleEntryResponse enterVehicle(VehicleEntryRequest request){
@@ -66,6 +70,11 @@ public class ParkingService {
             vehicle.setType(type);
             vehicleRepo.save(vehicle);
         }
+        Authentication authentication =SecurityContextHolder.getContext().getAuthentication();
+
+        String username = authentication.getName();
+        Users user = userRepo.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        
         ParkingTicket ticket = ticketRepo.findByVehicleVehicleIdAndExitTimeIsNull(vehicle.getVehicleId());
         if(ticket != null){
             throw new AlreadyParkedException("Vehicle Already has an ongoing ticket that didn't exit");
@@ -80,10 +89,11 @@ public class ParkingService {
         ticket = new ParkingTicket();
         ticket.setSpot(spot);
         ticket.setVehicle(vehicle);
+        ticket.setUser(user);
         ticket.setEntryTime(LocalDateTime.now());
         ticketRepo.save(ticket);
 
-        return new VehicleEntryResponse(request.getBranchId(),plate, spot.getSpotNumber(), LocalDateTime.now());
+        return new VehicleEntryResponse(request.getBranchId(),plate, spot.getSpotNumber(), ticket.getEntryTime());
     }
 
     public VehicleExitResponse exitVehicle(String plate, VehicleExitRequest request){
