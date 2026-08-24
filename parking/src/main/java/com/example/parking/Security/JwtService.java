@@ -20,7 +20,7 @@ public class JwtService {
 
     @Value("${jwt.expiration}")
     private long expiration;
-// TODO: understand what exactly is happening here
+
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secret); 
         return Keys.hmacShaKeyFor(keyBytes);

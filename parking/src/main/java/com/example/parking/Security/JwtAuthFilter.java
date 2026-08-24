@@ -14,7 +14,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-//TODO: understand this entire class
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
