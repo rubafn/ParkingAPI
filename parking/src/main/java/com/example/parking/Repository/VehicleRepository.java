@@ -12,4 +12,5 @@ import com.example.parking.model.Vehicle;
 public interface VehicleRepository extends JpaRepository<Vehicle, Integer>{
     Vehicle findByLicencePlate(String licencePlate);
     Page<Vehicle> findAllByType(VehicleType type, Pageable pageable);
+    Page<Vehicle> findByLicencePlateContainingIgnoreCase(String plate,Pageable pageable);
 }

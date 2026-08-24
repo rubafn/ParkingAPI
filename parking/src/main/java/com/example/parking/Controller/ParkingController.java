@@ -1,6 +1,7 @@
 package com.example.parking.Controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.parking.VehicleType;
@@ -58,6 +59,10 @@ public class ParkingController {
     @GetMapping("/vehicles")
     public Page<Vehicle> getAllVehicles(Pageable pageable){
         return this.service.findAllVehicles(pageable);
+    }
+    @GetMapping("/vehicles/search")
+    public Page<Vehicle> searchVehicles(@RequestParam String plate,Pageable pageable) {
+        return this.service.searchVehicles(plate, pageable);
     }
     @GetMapping("/vehicles/{type}")
     public Page<Vehicle> getAllVehiclesByType(@PathVariable VehicleType type,Pageable pageable){

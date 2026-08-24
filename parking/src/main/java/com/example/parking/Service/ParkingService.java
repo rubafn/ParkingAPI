@@ -2,7 +2,8 @@ package com.example.parking.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
+
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -39,7 +40,6 @@ import com.example.parking.model.Vehicle;
 
 @Service
 public class ParkingService {
-    // TODO: check that updating a spot for admin works
     // TODO: add a searching endpoint
     private final VehicleRepository vehicleRepo;
     private final SpotRepository spotRepo;
@@ -94,6 +94,9 @@ public class ParkingService {
     }
 
     public VehicleExitResponse exitVehicle(String plate, VehicleExitRequest request){
+        if(!plate.matches("[A-Za-z0-9]{2}-[A-Za-z0-9]{3}-[A-Za-z0-9]{2}")){
+            throw new InvalidVehicleTypeException("plate number must follow format XX-XXX-XX");
+        }
         Vehicle vehicle = vehicleRepo.findByLicencePlate(plate);
 
         if(vehicle == null){//vehicle doesnt have a ticket
@@ -133,6 +136,9 @@ public class ParkingService {
     }
     public Page<Vehicle> findAllVehiclesByType(VehicleType type, Pageable pageable) {
         return this.vehicleRepo.findAllByType(type, pageable);
+    }
+    public Page<Vehicle> searchVehicles(String plate,Pageable pageable) {
+        return this.vehicleRepo.findByLicencePlateContainingIgnoreCase(plate, pageable);
     }
     public Page<ParkingTicket> findAllTickets(Pageable pageable){
         return this.ticketRepo.findAll(pageable);

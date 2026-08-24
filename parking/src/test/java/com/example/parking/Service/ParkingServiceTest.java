@@ -111,7 +111,7 @@ public class ParkingServiceTest {
 
         // Existing vehicle
         Vehicle v = new Vehicle();
-        v.setLicencePlate("12345");
+        v.setLicencePlate("12-345-6A");
         v.setType(VehicleType.TRUCK);
 
 
@@ -121,7 +121,7 @@ public class ParkingServiceTest {
         ticket.setVehicle(v);
 
         // Tell mock vehicle repository that the vehicle exists
-        when(vehicleRepository.findByLicencePlate("12345"))
+        when(vehicleRepository.findByLicencePlate("12-345-6A"))
                 .thenReturn(v);
 
         // Tell mock ticket repository that vehicle has an active ticket
@@ -129,7 +129,7 @@ public class ParkingServiceTest {
                 .thenReturn(ticket);
 
         VehicleEntryRequest request = new VehicleEntryRequest();
-        request.setLicencePlate("12345");
+        request.setLicencePlate("12-345-6A");
         request.setVehicleType(VehicleType.TRUCK);
         request.setBranchId(1);
 
@@ -148,7 +148,7 @@ public class ParkingServiceTest {
 
         // Existing vehicle
         Vehicle v = new Vehicle();
-        v.setLicencePlate("12345");
+        v.setLicencePlate("12-345-6A");
         v.setType(VehicleType.TRUCK);
 
         // Available truck spot
@@ -161,7 +161,7 @@ public class ParkingServiceTest {
                 .thenReturn(s);
 
         // Tell mock vehicle repository that the vehicle exists
-        when(vehicleRepository.findByLicencePlate("12345"))
+        when(vehicleRepository.findByLicencePlate("12-345-6A"))
                 .thenReturn(v);
 
         // Tell mock ticket repository that vehicle does not have an active ticket
@@ -169,7 +169,7 @@ public class ParkingServiceTest {
                 .thenReturn(null);
 
         VehicleEntryRequest request = new VehicleEntryRequest();
-        request.setLicencePlate("12345");
+        request.setLicencePlate("12-345-6A");
         request.setVehicleType(VehicleType.TRUCK);
         request.setBranchId(1);
 
@@ -177,7 +177,7 @@ public class ParkingServiceTest {
             parkingService.enterVehicle(request);
 
         // Check the result
-        assertEquals("12345", response.getLicencePlate());
+        assertEquals("12-345-6A", response.getLicencePlate());
         assertEquals(199, response.getAssignedSpot());
         assertNotNull(response.getEntryTime());
         // Check that the spot became unavailable
@@ -209,7 +209,7 @@ public class ParkingServiceTest {
             .thenReturn(null);
 
         VehicleEntryRequest request = new VehicleEntryRequest();
-        request.setLicencePlate("12345");
+        request.setLicencePlate("12-345-6A");
         request.setVehicleType(VehicleType.MOTORCYCLE);
         request.setBranchId(1);
 
@@ -225,7 +225,7 @@ public class ParkingServiceTest {
 
         VehicleEntryRequest request = new VehicleEntryRequest();
 
-        request.setLicencePlate("12345");
+        request.setLicencePlate("12-35-6");
         request.setVehicleType(VehicleType.CAR);
         request.setBranchId(1);
 
@@ -241,7 +241,7 @@ public class ParkingServiceTest {
 
         VehicleEntryRequest request = new VehicleEntryRequest();
 
-        request.setLicencePlate("12-345-67");
+        request.setLicencePlate("12-345-6A");
         request.setVehicleType(VehicleType.CAR);
         request.setBranchId(1);
 
@@ -272,7 +272,7 @@ public class ParkingServiceTest {
     void VehicleExitTest_correct(){
         // Existing vehicle
         Vehicle v = new Vehicle();
-        v.setLicencePlate("12345");
+        v.setLicencePlate("12-345-6A");
         v.setType(VehicleType.TRUCK);
 
         //truck spot
@@ -296,7 +296,7 @@ public class ParkingServiceTest {
         s.setBranch(branch);
 
         // Tell mock vehicle repository that the vehicle exists
-        when(vehicleRepository.findByLicencePlate("12345"))
+        when(vehicleRepository.findByLicencePlate("12-345-6A"))
                 .thenReturn(v);
 
         // Tell mock ticket repository that vehicle has an active ticket
@@ -304,11 +304,11 @@ public class ParkingServiceTest {
                 .thenReturn(ticket);
 
 
-        VehicleExitResponse response = parkingService.exitVehicle("12345", new VehicleExitRequest(branch.getBranchId()));
+        VehicleExitResponse response = parkingService.exitVehicle("12-345-6A", new VehicleExitRequest(branch.getBranchId()));
 
         assertTrue(s.isAvailable());
 
-        assertEquals("12345", response.getPlateNumber());
+        assertEquals("12-345-6A", response.getPlateNumber());
 
         assertNotNull(ticket.getExitTime());
 
@@ -319,30 +319,30 @@ public class ParkingServiceTest {
     void VehicleExitTest_ticketDoesNotExist(){
          // Existing vehicle
         Vehicle v = new Vehicle();
-        v.setLicencePlate("12345");
+        v.setLicencePlate("12-345-6A");
         v.setType(VehicleType.TRUCK);
 
-         when(vehicleRepository.findByLicencePlate("12345"))
+         when(vehicleRepository.findByLicencePlate("12-345-6A"))
                 .thenReturn(v);
 
         // Tell mock ticket repository that vehicle has no active ticket
         when(ticketRepository.findByVehicleVehicleIdAndExitTimeIsNull(v.getVehicleId()))
                 .thenReturn(null);
 
-        assertThrows(NoTicketFoundException.class, () -> parkingService.exitVehicle("12345", new VehicleExitRequest(1)));
+        assertThrows(NoTicketFoundException.class, () -> parkingService.exitVehicle("12-345-6A", new VehicleExitRequest(1)));
     }
 
     @Test
     void VehicleExitTest_vehicleDoesNotExist(){
-         when(vehicleRepository.findByLicencePlate("12345"))
+         when(vehicleRepository.findByLicencePlate("12-345-6A"))
                 .thenReturn(null);
-        assertThrows(NoVehicleFoundException.class, ()-> parkingService.exitVehicle("12345", new VehicleExitRequest(1)));
+        assertThrows(NoVehicleFoundException.class, ()-> parkingService.exitVehicle("12-345-6A", new VehicleExitRequest(1)));
     }
     @Test
     void VehicleExitTest_wrongBranch() {
 
         Vehicle v = new Vehicle();
-        v.setLicencePlate("12345");
+        v.setLicencePlate("12-345-6A");
         v.setType(VehicleType.TRUCK);
 
         Branch actualBranch = new Branch();
@@ -362,7 +362,7 @@ public class ParkingServiceTest {
         ticket.setSpot(s);
         ticket.setEntryTime(LocalDateTime.now().minusHours(2));
 
-        when(vehicleRepository.findByLicencePlate("12345"))
+        when(vehicleRepository.findByLicencePlate("12-345-6A"))
                 .thenReturn(v);
 
         when(ticketRepository
@@ -375,7 +375,7 @@ public class ParkingServiceTest {
         assertThrows(
                 NoTicketFoundException.class,
                 () -> parkingService.exitVehicle(
-                        "12345",
+                        "12-345-6A",
                         new VehicleExitRequest(2)
                 )
         );
@@ -390,7 +390,7 @@ public class ParkingServiceTest {
     void VehicleExitTest_branchDoesNotExist() {
 
         Vehicle v = new Vehicle();
-        v.setLicencePlate("12345");
+        v.setLicencePlate("12-345-6A");
         v.setType(VehicleType.TRUCK);
 
         Spot s = new Spot();
@@ -403,7 +403,7 @@ public class ParkingServiceTest {
         ticket.setSpot(s);
         ticket.setEntryTime(LocalDateTime.now().minusHours(2));
 
-        when(vehicleRepository.findByLicencePlate("12345"))
+        when(vehicleRepository.findByLicencePlate("12-345-6A"))
                 .thenReturn(v);
 
         when(ticketRepository
@@ -416,7 +416,7 @@ public class ParkingServiceTest {
         assertThrows(
                 DoesNotExistException.class,
                 () -> parkingService.exitVehicle(
-                        "12345",
+                        "12-345-6A",
                         new VehicleExitRequest(999)
                 )
         );
@@ -449,7 +449,7 @@ public class ParkingServiceTest {
         Pageable pageable = PageRequest.of(0, 5);
 
         Vehicle vehicle = new Vehicle();
-        vehicle.setLicencePlate("12-345-67");
+        vehicle.setLicencePlate("12-345-6A");
         vehicle.setType(VehicleType.CAR);
 
         Page<Vehicle> page =
@@ -467,7 +467,7 @@ public class ParkingServiceTest {
 
         assertEquals(1, result.getTotalElements());
         assertEquals(
-                "12-345-67",
+                "12-345-6A",
                 result.getContent().get(0).getLicencePlate()
         );
     }
@@ -478,17 +478,17 @@ public class ParkingServiceTest {
         setUpSecurityContext();
 
         Vehicle vehicle = new Vehicle();
-        vehicle.setLicencePlate("12345");
+        vehicle.setLicencePlate("12-345-6A");
         vehicle.setType(VehicleType.CAR);
 
-        when(vehicleRepository.findByLicencePlate("12345"))
+        when(vehicleRepository.findByLicencePlate("12-345-6A"))
                 .thenReturn(vehicle);
 
         when(userRepository.findByUsername("rubanabhan"))
                 .thenReturn(Optional.empty());
 
         VehicleEntryRequest request = new VehicleEntryRequest();
-        request.setLicencePlate("12345");
+        request.setLicencePlate("12-345-6A");
         request.setVehicleType(VehicleType.CAR);
         request.setBranchId(1);
 
@@ -676,5 +676,143 @@ public class ParkingServiceTest {
                 SpotAlreadyExistsException.class,
                 () -> parkingService.UpdateSpot(1, request)
         );
+    }
+
+    //searching vehicles
+    @Test
+    void SearchVehiclesTest_correct() {
+
+        Vehicle v1 = new Vehicle();
+        v1.setLicencePlate("12-345-6A");
+        v1.setType(VehicleType.CAR);
+
+        Vehicle v2 = new Vehicle();
+        v2.setLicencePlate("12-345-6B");
+        v2.setType(VehicleType.TRUCK);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<Vehicle> page =
+                new PageImpl<>(List.of(v1, v2), pageable, 2);
+
+        when(vehicleRepository.findByLicencePlateContainingIgnoreCase(
+                "12",
+                pageable
+        )).thenReturn(page);
+
+        Page<Vehicle> result =
+                parkingService.searchVehicles("12", pageable);
+
+        assertNotNull(result);
+        assertEquals(2, result.getTotalElements());
+        assertEquals(2, result.getContent().size());
+
+        assertEquals("12-345-6A",
+                result.getContent().get(0).getLicencePlate());
+
+        assertEquals("12-345-6B",
+                result.getContent().get(1).getLicencePlate());
+    }
+    @Test
+    void SearchVehiclesTest_noResults() {
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<Vehicle> emptyPage =
+                new PageImpl<>(
+                        List.of(),
+                        pageable,
+                        0
+                );
+
+        when(vehicleRepository.findByLicencePlateContainingIgnoreCase(
+                "ZZZ",
+                pageable
+        )).thenReturn(emptyPage);
+
+        Page<Vehicle> result =
+                parkingService.searchVehicles("ZZZ", pageable);
+
+        assertNotNull(result);
+
+        assertTrue(result.isEmpty());
+        assertEquals(0, result.getTotalElements());
+
+        verify(vehicleRepository)
+                .findByLicencePlateContainingIgnoreCase(
+                        "ZZZ",
+                        pageable
+                );
+    }
+    @Test
+    void SearchVehiclesTest_caseInsensitiveSearch() {
+
+        Vehicle vehicle = new Vehicle();
+        vehicle.setLicencePlate("AB-123-CD");
+        vehicle.setType(VehicleType.CAR);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<Vehicle> page =
+                new PageImpl<>(
+                        List.of(vehicle),
+                        pageable,
+                        1
+                );
+
+        when(vehicleRepository.findByLicencePlateContainingIgnoreCase(
+                "abc",
+                pageable
+        )).thenReturn(page);
+
+        Page<Vehicle> result =
+                parkingService.searchVehicles("abc", pageable);
+
+        assertEquals(1, result.getTotalElements());
+
+        assertEquals(
+                "AB-123-CD",
+                result.getContent().get(0).getLicencePlate()
+        );
+
+        verify(vehicleRepository)
+                .findByLicencePlateContainingIgnoreCase(
+                        "abc",
+                        pageable
+                );
+    }
+    @Test
+    void SearchVehiclesTest_pagination() {
+
+        Pageable pageable = PageRequest.of(2, 5);
+
+        Vehicle vehicle = new Vehicle();
+        vehicle.setLicencePlate("12-ABC-34");
+        vehicle.setType(VehicleType.CAR);
+
+        Page<Vehicle> page =
+                new PageImpl<>(
+                        List.of(vehicle),
+                        pageable,
+                        11
+                );
+
+        when(vehicleRepository.findByLicencePlateContainingIgnoreCase(
+                "ABC",
+                pageable
+        )).thenReturn(page);
+
+        Page<Vehicle> result =
+                parkingService.searchVehicles("ABC", pageable);
+
+        assertEquals(11, result.getTotalElements());
+        assertEquals(2, result.getNumber());
+        assertEquals(5, result.getSize());
+
+        verify(vehicleRepository)
+                .findByLicencePlateContainingIgnoreCase(
+                        "ABC",
+                        pageable
+                );
     }
 }

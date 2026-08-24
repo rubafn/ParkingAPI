@@ -8,6 +8,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 public class Vehicle {
@@ -15,6 +16,7 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int vehicleId;
 
+    @Pattern(regexp = "[A-Za-z0-9]{2}-[A-Za-z0-9]{3}-[A-Za-z0-9]{2}", message = "Licence plate must follow the format XX-XXX-XX")
     private String licencePlate;
 
     @Enumerated(EnumType.STRING)

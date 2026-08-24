@@ -5,7 +5,7 @@ import com.example.parking.VehicleType;
 import jakarta.validation.constraints.Pattern;
 
 public class VehicleEntryRequest {
-    @Pattern(regexp = "\\d{2}-\\d{3}-\\d{2}", message = "Licence plate must follow the format XX-XXX-XX")
+    @Pattern( regexp = "[A-Za-z0-9]{2}-[A-Za-z0-9]{3}-[A-Za-z0-9]{2}", message = "Licence plate must follow the format XX-XXX-XX")
     private String licencePlate;
     private VehicleType vehicleType;
     private int branchId;
