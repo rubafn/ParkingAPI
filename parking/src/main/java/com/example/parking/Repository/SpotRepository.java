@@ -12,4 +12,5 @@ public interface SpotRepository extends JpaRepository<Spot, Integer>{
     Spot findFirstByTypeAndBranchBranchIdAndIsAvailableTrue(VehicleType type,int branchId);
     Page<Spot> findAllByIsAvailableTrue(Pageable pageable);
     Spot findBySpotNumberAndBranchBranchId(int spotNumber, int branchId);
+    Page<Spot> findByBranchLocationContainingIgnoreCase(String location, Pageable pageable);
 }

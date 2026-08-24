@@ -33,4 +33,10 @@ public class UserService {
         return userRepository.findAll(pageable)
                 .map(user -> new UserResponse(user.getUsername(),user.getRole()));
     }
+    public Page<UserResponse> searchUsers(
+        String username,
+        Pageable pageable) {
+
+    return userRepository.findByUsernameContainingIgnoreCase(username, pageable).map(user -> new UserResponse(user.getUsername(),user.getRole() ));
+}
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.parking.DTO.UserResponse;
@@ -32,5 +33,10 @@ public class UserController {
     @GetMapping
     public Page<UserResponse> getAllUsers(Pageable pageable){
         return userService.getAllUsers(pageable);
+    }
+    @GetMapping("/search")
+    public Page<UserResponse> searchUsers(@RequestParam String username,Pageable pageable) {
+
+        return userService.searchUsers(username, pageable);
     }
 }

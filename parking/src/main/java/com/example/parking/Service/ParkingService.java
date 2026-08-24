@@ -3,7 +3,6 @@ package com.example.parking.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -131,6 +130,9 @@ public class ParkingService {
     public Page<Spot> getAvailableSpots(Pageable pageable){
         return this.spotRepo.findAllByIsAvailableTrue(pageable);
     }
+    public Page<Spot> searchSpots(String location, Pageable pageable) {
+        return spotRepo.findByBranchLocationContainingIgnoreCase(location, pageable);
+    }
     public Page<Vehicle> findAllVehicles(Pageable pageable) {
         return this.vehicleRepo.findAll(pageable);
     }
@@ -145,6 +147,10 @@ public class ParkingService {
     }
     public Page<ParkingTicket> findAllOngoingTickets(Pageable pageable){
         return this.ticketRepo.findAllByExitTimeIsNull(pageable);
+    }
+    public Page<ParkingTicket> searchTickets(String licencePlate, Pageable pageable) {
+
+        return ticketRepo.findByVehicleLicencePlateContainingIgnoreCase(licencePlate,pageable);
     }
 
     public Spot addNewSpot(SpotAddRequest request){
@@ -193,5 +199,9 @@ public class ParkingService {
         b = new Branch();
         b.setLocation(location);
         return this.branchRepo.save(b);
+    }
+    public Page<Branch> searchBranches(String location,Pageable pageable) {
+
+        return branchRepo.findByLocationContainingIgnoreCase(location,pageable);
     }
 }

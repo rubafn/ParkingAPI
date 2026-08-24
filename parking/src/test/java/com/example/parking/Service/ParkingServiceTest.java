@@ -35,6 +35,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.example.parking.VehicleType;
 import com.example.parking.DTO.SpotAddRequest;
 import com.example.parking.DTO.SpotUpdateRequest;
+import com.example.parking.DTO.UserResponse;
 import com.example.parking.DTO.VehicleEntryRequest;
 import com.example.parking.DTO.VehicleEntryResponse;
 import com.example.parking.DTO.VehicleExitRequest;
@@ -86,6 +87,9 @@ public class ParkingServiceTest {
 
     @InjectMocks
     private ParkingService parkingService;
+
+    @InjectMocks
+    private UserService userService;
 
     void setUpSecurityContext() {
 
@@ -814,5 +818,171 @@ public class ParkingServiceTest {
                         "ABC",
                         pageable
                 );
+    }
+    //searching spots
+    @Test
+    void SearchSpotsTest_correct() {
+
+        Branch ramallah = new Branch();
+        ramallah.setLocation("Ramallah");
+
+        Spot s1 = new Spot();
+        s1.setSpotNumber(10);
+        s1.setType(VehicleType.CAR);
+        s1.setBranch(ramallah);
+
+        Spot s2 = new Spot();
+        s2.setSpotNumber(20);
+        s2.setType(VehicleType.TRUCK);
+        s2.setBranch(ramallah);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<Spot> page =
+                new PageImpl<>(List.of(s1, s2), pageable, 2);
+
+        when(spotRepository.findByBranchLocationContainingIgnoreCase(
+                "Ramallah",
+                pageable
+        )).thenReturn(page);
+
+        Page<Spot> result =
+                parkingService.searchSpots("Ramallah", pageable);
+
+        assertNotNull(result);
+        assertEquals(2, result.getTotalElements());
+        assertEquals(2, result.getContent().size());
+
+        assertEquals(
+                10,
+                result.getContent().get(0).getSpotNumber()
+        );
+
+        assertEquals(
+                20,
+                result.getContent().get(1).getSpotNumber()
+        );
+    }
+    @Test
+    void SearchTicketsTest_correct() {
+
+        Vehicle v1 = new Vehicle();
+        v1.setLicencePlate("12-ABC-345");
+        v1.setType(VehicleType.CAR);
+
+        Vehicle v2 = new Vehicle();
+        v2.setLicencePlate("ABC-777");
+        v2.setType(VehicleType.TRUCK);
+
+        ParkingTicket t1 = new ParkingTicket();
+        t1.setVehicle(v1);
+
+        ParkingTicket t2 = new ParkingTicket();
+        t2.setVehicle(v2);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<ParkingTicket> page =
+                new PageImpl<>(List.of(t1, t2), pageable, 2);
+
+        when(ticketRepository.findByVehicleLicencePlateContainingIgnoreCase(
+                "ABC",
+                pageable
+        )).thenReturn(page);
+
+        Page<ParkingTicket> result =
+                parkingService.searchTickets("ABC", pageable);
+
+        assertNotNull(result);
+        assertEquals(2, result.getTotalElements());
+        assertEquals(2, result.getContent().size());
+
+        assertEquals(
+                "12-ABC-345",
+                result.getContent().get(0)
+                        .getVehicle()
+                        .getLicencePlate()
+        );
+
+        assertEquals(
+                "ABC-777",
+                result.getContent().get(1)
+                        .getVehicle()
+                        .getLicencePlate()
+        );
+    }
+    @Test
+    void SearchBranchesTest_correct() {
+
+        Branch b1 = new Branch();
+        b1.setLocation("Ramallah");
+
+        Branch b2 = new Branch();
+        b2.setLocation("Ramallah Downtown");
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<Branch> page =
+                new PageImpl<>(List.of(b1, b2), pageable, 2);
+
+        when(branchRepository.findByLocationContainingIgnoreCase(
+                "Ramallah",
+                pageable
+        )).thenReturn(page);
+
+        Page<Branch> result =
+                parkingService.searchBranches("Ramallah", pageable);
+
+        assertNotNull(result);
+        assertEquals(2, result.getTotalElements());
+        assertEquals(2, result.getContent().size());
+
+        assertEquals(
+                "Ramallah",
+                result.getContent().get(0).getLocation()
+        );
+
+        assertEquals(
+                "Ramallah Downtown",
+                result.getContent().get(1).getLocation()
+        );
+     }
+
+     
+     @Test
+     void SearchUsersTest_correct() {
+
+        Users u1 = new Users();
+        u1.setUsername("rubanabhan");
+
+        Users u2 = new Users();
+        u2.setUsername("rubaAdmin");
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<Users> page =
+                new PageImpl<>(List.of(u1, u2), pageable, 2);
+
+        when(userRepository.findByUsernameContainingIgnoreCase(
+                "ruba",
+                pageable
+        )).thenReturn(page);
+
+        Page<UserResponse> result =
+                userService.searchUsers("ruba", pageable);
+
+        assertNotNull(result);
+        assertEquals(2, result.getTotalElements());
+        assertEquals(2, result.getContent().size());
+
+        assertEquals(
+                "rubanabhan",
+                result.getContent().get(0).getUsername()
+        );
+
+        assertEquals(
+                "rubaAdmin",
+                result.getContent().get(1).getUsername()
+        );
     }
 }

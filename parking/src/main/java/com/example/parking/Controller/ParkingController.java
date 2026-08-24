@@ -72,14 +72,22 @@ public class ParkingController {
     public Page<ParkingTicket> getAllTickets(Pageable pageable){
         return this.service.findAllTickets(pageable);
     }
-    @GetMapping("/tickets/Ongoing")
+    @GetMapping("/tickets/ongoing")
     public Page<ParkingTicket> getAllOngoingTickets(Pageable pageable){
         return this.service.findAllOngoingTickets(pageable);
+    }
+    @GetMapping("/tickets/search")
+    public Page<ParkingTicket> searchTickets(@RequestParam String licencePlate,Pageable pageable) {
+        return service.searchTickets(licencePlate, pageable);
     }
 
     @PostMapping("/spots")
     public Spot addNewSpot(@RequestBody SpotAddRequest request) {
         return this.service.addNewSpot(request);
+    }
+    @GetMapping("/spots/search")
+    public Page<Spot> searchSpots( @RequestParam String location,Pageable pageable) {
+        return service.searchSpots(location, pageable);
     }
     @PatchMapping("/spots/{id}")
     public Spot UpdateSpot(@PathVariable int id, @RequestBody SpotUpdateRequest request){
@@ -89,6 +97,10 @@ public class ParkingController {
     @PostMapping("/branches")
     public Branch addBranch(@RequestBody String location) {
         return this.service.addBranch(location);
+    }
+    @GetMapping("/branches/search")
+    public Page<Branch> searchBranches(@RequestParam String location,Pageable pageable) {
+        return service.searchBranches(location, pageable);
     }
     
 }
