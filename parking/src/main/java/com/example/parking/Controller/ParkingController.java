@@ -17,6 +17,7 @@ import com.example.parking.model.Spot;
 import com.example.parking.model.Vehicle;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +40,7 @@ public class ParkingController {
     }
     
     @PostMapping("/entry")
-    public VehicleEntryResponse enterVehicle(@RequestBody VehicleEntryRequest request) {
+    public VehicleEntryResponse enterVehicle(@Valid @RequestBody VehicleEntryRequest request) {
         return this.service.enterVehicle(request);
     }
     @PostMapping("/exit/{plateNumber}")

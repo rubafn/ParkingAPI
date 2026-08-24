@@ -39,11 +39,8 @@ import com.example.parking.model.Vehicle;
 
 @Service
 public class ParkingService {
-    // TODO: add getting the currently logged in user from the token so we can add it to the new parking ticket and stuff
     // TODO: check that updating a spot for admin works
-    // TODO: check that the pattern validation works
     // TODO: add a searching endpoint
-    // TODO: check that spot number pattern validation works
     private final VehicleRepository vehicleRepo;
     private final SpotRepository spotRepo;
     private final TicketRepository ticketRepo;
