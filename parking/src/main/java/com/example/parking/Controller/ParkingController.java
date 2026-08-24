@@ -23,7 +23,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -45,39 +45,39 @@ public class ParkingController {
         return this.service.enterVehicle(request);
     }
     @PostMapping("/exit/{plateNumber}")
-    public VehicleExitResponse exitVehicle(@PathVariable String plateNumber,VehicleExitRequest request) {
+    public VehicleExitResponse exitVehicle(@PathVariable String plateNumber, @Valid @RequestBody VehicleExitRequest request) {
         return this.service.exitVehicle(plateNumber,request);
     }
     @GetMapping("/spots")
-    public Page<Spot> getAllSpots(Pageable pageable) {
+    public Page<Spot> getAllSpots( @ParameterObject Pageable pageable) {
         return this.service.getAllSpots(pageable);
     }
     @GetMapping("/spots/available")
-    public Page<Spot> getAvailableSpots(Pageable pageable){
+    public Page<Spot> getAvailableSpots( @ParameterObject Pageable pageable){
         return this.service.getAvailableSpots(pageable);
     }
     @GetMapping("/vehicles")
-    public Page<Vehicle> getAllVehicles(Pageable pageable){
+    public Page<Vehicle> getAllVehicles( @ParameterObject Pageable pageable){
         return this.service.findAllVehicles(pageable);
     }
     @GetMapping("/vehicles/search")
-    public Page<Vehicle> searchVehicles(@RequestParam String plate,Pageable pageable) {
+    public Page<Vehicle> searchVehicles(@RequestParam String plate, @ParameterObject Pageable pageable) {
         return this.service.searchVehicles(plate, pageable);
     }
     @GetMapping("/vehicles/{type}")
-    public Page<Vehicle> getAllVehiclesByType(@PathVariable VehicleType type,Pageable pageable){
+    public Page<Vehicle> getAllVehiclesByType(@PathVariable VehicleType type, @ParameterObject Pageable pageable){
         return this.service.findAllVehiclesByType(type, pageable);
     }
     @GetMapping("/tickets")
-    public Page<ParkingTicket> getAllTickets(Pageable pageable){
+    public Page<ParkingTicket> getAllTickets( @ParameterObject Pageable pageable){
         return this.service.findAllTickets(pageable);
     }
     @GetMapping("/tickets/ongoing")
-    public Page<ParkingTicket> getAllOngoingTickets(Pageable pageable){
+    public Page<ParkingTicket> getAllOngoingTickets( @ParameterObject Pageable pageable){
         return this.service.findAllOngoingTickets(pageable);
     }
     @GetMapping("/tickets/search")
-    public Page<ParkingTicket> searchTickets(@RequestParam String licencePlate,Pageable pageable) {
+    public Page<ParkingTicket> searchTickets(@RequestParam String licencePlate, @ParameterObject Pageable pageable) {
         return service.searchTickets(licencePlate, pageable);
     }
 
@@ -86,7 +86,7 @@ public class ParkingController {
         return this.service.addNewSpot(request);
     }
     @GetMapping("/spots/search")
-    public Page<Spot> searchSpots( @RequestParam String location,Pageable pageable) {
+    public Page<Spot> searchSpots( @RequestParam String location, @ParameterObject Pageable pageable) {
         return service.searchSpots(location, pageable);
     }
     @PatchMapping("/spots/{id}")
@@ -99,7 +99,7 @@ public class ParkingController {
         return this.service.addBranch(location);
     }
     @GetMapping("/branches/search")
-    public Page<Branch> searchBranches(@RequestParam String location,Pageable pageable) {
+    public Page<Branch> searchBranches(@RequestParam String location, @ParameterObject Pageable pageable) {
         return service.searchBranches(location, pageable);
     }
     

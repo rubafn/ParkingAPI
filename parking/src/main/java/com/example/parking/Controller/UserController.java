@@ -1,6 +1,7 @@
 package com.example.parking.Controller;
 
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,11 +32,11 @@ public class UserController {
         return userService.makeAdmin(username);
     }
     @GetMapping
-    public Page<UserResponse> getAllUsers(Pageable pageable){
+    public Page<UserResponse> getAllUsers( @ParameterObject Pageable pageable){
         return userService.getAllUsers(pageable);
     }
     @GetMapping("/search")
-    public Page<UserResponse> searchUsers(@RequestParam String username,Pageable pageable) {
+    public Page<UserResponse> searchUsers(@RequestParam String username, @ParameterObject Pageable pageable) {
 
         return userService.searchUsers(username, pageable);
     }
