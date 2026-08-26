@@ -23,7 +23,6 @@ import com.example.parking.DTO.LoginRequest;
 @Service
 public class AuthService {
 
-    //TODO: let admin make another user admin
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;

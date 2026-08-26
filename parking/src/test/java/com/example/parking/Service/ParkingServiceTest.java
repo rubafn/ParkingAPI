@@ -63,7 +63,6 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
-//TODO: fix tests (user related)
 
 @ExtendWith(MockitoExtension.class)//this is to create mock repositories for testing
 public class ParkingServiceTest {
@@ -948,7 +947,7 @@ public class ParkingServiceTest {
         );
      }
 
-     
+
      @Test
      void SearchUsersTest_correct() {
 

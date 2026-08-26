@@ -19,7 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    //TODO: fix endpoints for user,admin
 
     private final JwtAuthFilter jwtAuthFilter;
 
