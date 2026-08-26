@@ -39,7 +39,8 @@ import com.example.parking.model.Vehicle;
 
 @Service
 public class ParkingService {
-    // TODO: add a searching endpoint
+    // TODO: make the users just employees and admin can have very specific mathods 
+    //TODO: add annotations to controller better and understand how to make custome validations
     private final VehicleRepository vehicleRepo;
     private final SpotRepository spotRepo;
     private final TicketRepository ticketRepo;

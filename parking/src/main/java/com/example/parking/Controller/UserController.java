@@ -4,6 +4,7 @@ package com.example.parking.Controller;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,15 +28,18 @@ public class UserController {
     }
 
     @PutMapping("/{username}/admin")
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse makeAdmin(@PathVariable String username) {
 
         return userService.makeAdmin(username);
     }
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public Page<UserResponse> getAllUsers( @ParameterObject Pageable pageable){
         return userService.getAllUsers(pageable);
     }
     @GetMapping("/search")
+    @PreAuthorize("hasRole('ADMIN')")
     public Page<UserResponse> searchUsers(@RequestParam String username, @ParameterObject Pageable pageable) {
 
         return userService.searchUsers(username, pageable);
