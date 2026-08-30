@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.parking.VehicleType;
@@ -27,14 +25,12 @@ import com.example.parking.Exceptions.SpotAlreadyExistsException;
 import com.example.parking.Repository.BranchRepository;
 import com.example.parking.Repository.SpotRepository;
 import com.example.parking.Repository.TicketRepository;
-import com.example.parking.Repository.UserRepository;
 import com.example.parking.Repository.VehicleRepository;
 import com.example.parking.Strategy.FeeStrategy;
 import com.example.parking.Strategy.TypesFeeStrategy;
 import com.example.parking.model.Branch;
 import com.example.parking.model.ParkingTicket;
 import com.example.parking.model.Spot;
-import com.example.parking.model.Users;
 import com.example.parking.model.Vehicle;
 
 @Service
@@ -43,14 +39,12 @@ public class ParkingService {
     private final SpotRepository spotRepo;
     private final TicketRepository ticketRepo;
     private final BranchRepository branchRepo;
-    private final UserRepository userRepo;
 
-    public ParkingService(VehicleRepository vehicleRepo, SpotRepository spotRepo, TicketRepository ticketRepo, BranchRepository branchRepo,UserRepository userRepo){
+    public ParkingService(VehicleRepository vehicleRepo, SpotRepository spotRepo, TicketRepository ticketRepo, BranchRepository branchRepo){
         this.spotRepo = spotRepo;
         this.vehicleRepo = vehicleRepo;
         this.ticketRepo = ticketRepo;
         this.branchRepo= branchRepo;
-        this.userRepo = userRepo;
     }
 
     public VehicleEntryResponse enterVehicle(VehicleEntryRequest request){
@@ -65,10 +59,6 @@ public class ParkingService {
             vehicle.setType(type);
             vehicleRepo.save(vehicle);
         }
-        Authentication authentication =SecurityContextHolder.getContext().getAuthentication();
-
-        String username = authentication.getName();
-        Users user = userRepo.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
         
         ParkingTicket ticket = ticketRepo.findByVehicleVehicleIdAndExitTimeIsNull(vehicle.getVehicleId());
         if(ticket != null){
@@ -84,7 +74,6 @@ public class ParkingService {
         ticket = new ParkingTicket();
         ticket.setSpot(spot);
         ticket.setVehicle(vehicle);
-        ticket.setUser(user);
         ticket.setEntryTime(LocalDateTime.now());
         ticketRepo.save(ticket);
 

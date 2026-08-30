@@ -106,11 +106,6 @@ public class ParkingServiceTest {
 
     @Test
     void VehicleEntryTest_shouldNotEnterDuplicate() {
-        setUpSecurityContext();
-
-        Users user = new Users();
-        user.setUsername("rubanabhan");
-        when(userRepository.findByUsername("rubanabhan")).thenReturn(Optional.of(user));
 
         // Existing vehicle
         Vehicle v = new Vehicle();
@@ -144,10 +139,6 @@ public class ParkingServiceTest {
 
     @Test
     void VehicleEntryTest_correct(){
-        setUpSecurityContext();
-        Users user = new Users();
-        user.setUsername("rubanabhan");
-        when(userRepository.findByUsername("rubanabhan")).thenReturn(Optional.of(user));
 
         // Existing vehicle
         Vehicle v = new Vehicle();
@@ -197,16 +188,11 @@ public class ParkingServiceTest {
         // Verify ticket information
         assertEquals(v, savedTicket.getVehicle());
         assertEquals(s, savedTicket.getSpot());
-        assertEquals(user, savedTicket.getUser());
         assertNotNull(savedTicket.getEntryTime());
     }
 
     @Test
     void VehicleEntryTest_noAvailableSpots(){
-        setUpSecurityContext();
-        Users user = new Users();
-        user.setUsername("rubanabhan");
-        when(userRepository.findByUsername("rubanabhan")).thenReturn(Optional.of(user));
 
         when(spotRepository.findFirstByTypeAndBranchBranchIdAndIsAvailableTrue(VehicleType.MOTORCYCLE,1))
             .thenReturn(null);
@@ -475,31 +461,6 @@ public class ParkingServiceTest {
         );
     }
 
-    //users
-    @Test
-    void VehicleEntryTest_loggedInUserDoesNotExist() {
-        setUpSecurityContext();
-
-        Vehicle vehicle = new Vehicle();
-        vehicle.setLicencePlate("12-345-6A");
-        vehicle.setType(VehicleType.CAR);
-
-        when(vehicleRepository.findByLicencePlate("12-345-6A"))
-                .thenReturn(vehicle);
-
-        when(userRepository.findByUsername("rubanabhan"))
-                .thenReturn(Optional.empty());
-
-        VehicleEntryRequest request = new VehicleEntryRequest();
-        request.setLicencePlate("12-345-6A");
-        request.setVehicleType(VehicleType.CAR);
-        request.setBranchId(1);
-
-        assertThrows(
-                RuntimeException.class,
-                () -> parkingService.enterVehicle(request)
-        );
-    }
     //admin operations
     @Test
     void AddBranchTest_correct() {
