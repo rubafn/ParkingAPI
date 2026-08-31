@@ -24,10 +24,6 @@ public class ParkingTicket {
     @JoinColumn(name ="spot_id")
     private Spot spot;
 
-    @ManyToOne
-    @JoinColumn(name ="user_id")
-    private Users user;
-
     private double fee;
     private LocalDateTime entryTime;
     private LocalDateTime exitTime;
@@ -65,12 +61,6 @@ public class ParkingTicket {
     public void setExitTime(LocalDateTime exitTime) {
         this.exitTime = exitTime;
     }
-    public Users getUser() {
-        return user;
-    }
-    public void setUser(Users user) {
-        this.user = user;
-    } 
 
 
 }
