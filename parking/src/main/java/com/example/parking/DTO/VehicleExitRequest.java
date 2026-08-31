@@ -1,9 +1,7 @@
 package com.example.parking.DTO;
 
-import jakarta.validation.constraints.NotBlank;
 
 public class VehicleExitRequest {
-    @NotBlank(message ="please specify branch Id")
     private int branchId;
 
 

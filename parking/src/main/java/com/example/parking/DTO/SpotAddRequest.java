@@ -4,10 +4,8 @@ import com.example.parking.VehicleType;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 
 public class SpotAddRequest {
-    @NotBlank(message ="please specify branch Id")
     private int branchId;
     @Min(1)
     @Max(999)
