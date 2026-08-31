@@ -5,11 +5,11 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class LoginRequest {
-    @NotBlank
+    @NotBlank(message = "username cannot be null")
     private String username;
 
     @NotBlank
-    @Size(min = 6, max = 60)
+    @Size(min = 6, max = 60, message = "password must be 6 characters or more and cannot exceed 60 characters")
     @Pattern(
         regexp = "^[A-Za-z](?=.*\\d)(?=.*[^A-Za-z\\d]).*$",
         message = "Password must start with a letter and contain at least one number and one special character"
