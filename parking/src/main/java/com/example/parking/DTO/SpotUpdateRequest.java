@@ -4,12 +4,14 @@ import com.example.parking.VehicleType;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
 public class SpotUpdateRequest {
+    @NotBlank(message = "{type.required}")
     private VehicleType type;
     private Boolean isAvailable;
-    @Min(1)
-    @Max(999)
+    @Min(value = 1, message = "{spotNumber.min}")
+    @Max(value = 999, message = "{spotNumber.max}")
     private int spotNumber;
 
     public VehicleType getType() {
