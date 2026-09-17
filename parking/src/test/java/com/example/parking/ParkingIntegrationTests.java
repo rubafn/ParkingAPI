@@ -1,6 +1,8 @@
 package com.example.parking;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -16,10 +18,12 @@ import com.example.parking.model.Spot;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class ParkingIntegrationTests {
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -29,64 +33,87 @@ public class ParkingIntegrationTests {
     @Autowired
     private SpotRepository spotRepo;
 
+    // Store the branch created for the current test
+    private Branch branch;
+
 
     @BeforeEach
-    void setUp(){
-        Branch branch = new Branch();
-        branch.setLocation("Test Ramallah");
-        branchRepo.save(branch);
+    void setUp() {
 
+        // Create a branch in the temporary H2 database
+        branch = new Branch();
+        branch.setLocation("Test Ramallah");
+        branch = branchRepo.save(branch);
+
+        // Create an available CAR spot in that branch
         Spot spot = new Spot();
         spot.setAvailable(true);
         spot.setBranch(branch);
         spot.setSpotNumber(110);
         spot.setType(VehicleType.CAR);
+
         spotRepo.save(spot);
     }
+
+
     @Test
-    void testEntry() throws Exception{
-        mockMvc.perform(post("/api/parking/entry").contentType(MediaType.APPLICATION_JSON).content("""
-            {
-                "licencePlate":"12-345-69",
-                "vehicleType": "CAR",
-                "branchId": 1
-            }
-        """)
-        ).andExpect(status().isOk())
-        .andExpect(jsonPath("$.licencePlate").value("12-345-69"))
-        .andExpect(jsonPath("$.branchId").value(1))
+    void testEntry() throws Exception {
+
+        int branchId = branch.getBranchId();
+
+        mockMvc.perform(
+            post("/api/parking/entry")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                        "licencePlate": "12-345-68",
+                        "vehicleType": "CAR",
+                        "branchId": %d
+                    }
+                    """.formatted(branchId))
+        )
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.licencePlate").value("12-345-68"))
+        .andExpect(jsonPath("$.branchId").value(branchId))
         .andExpect(jsonPath("$.assignedSpot").value(110));
     }
+
+
     @Test
-    void testExit() throws Exception{
-        
-    // ARRANGE: vehicle enters first
-    mockMvc.perform(
-        post("/api/parking/entry")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("""
-                {
-                    "licencePlate": "12-345-69",
-                    "vehicleType": "CAR",
-                    "branchId": 1
-                }
-            """)
-    )
-    .andExpect(status().isOk());
+    void testExit() throws Exception {
 
-    // ACT + ASSERT: now exit it
-    mockMvc.perform(
-        post("/api/parking/exit/12-345-69")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("""
-                {
-                    "branchId": 1
-                }
-            """)
-    )
-    .andExpect(status().isOk())
-    .andExpect(jsonPath("$.plateNumber").value("12-345-69"));
+        int branchId = branch.getBranchId();
+
+        // ARRANGE:
+        // First enter the vehicle so that it has an active ticket.
+        mockMvc.perform(
+            post("/api/parking/entry")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                        "licencePlate": "12-345-60",
+                        "vehicleType": "CAR",
+                        "branchId": %d
+                    }
+                    """.formatted(branchId))
+        )
+        .andExpect(status().isOk());
+
+
+        // ACT:
+        // Now exit the same vehicle from the same branch.
+        mockMvc.perform(
+            post("/api/parking/exit/12-345-60")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                        "branchId": %d
+                    }
+                    """.formatted(branchId))
+        )
+
+        // ASSERT
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.plateNumber").value("12-345-60"));
     }
-
-
 }

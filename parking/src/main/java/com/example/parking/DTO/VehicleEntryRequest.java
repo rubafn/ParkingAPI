@@ -3,13 +3,14 @@ package com.example.parking.DTO;
 import com.example.parking.VehicleType;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public class VehicleEntryRequest {
     @NotBlank(message = "{licencePlate.required}")
     @Pattern( regexp = "[A-Za-z0-9]{2}-[A-Za-z0-9]{3}-[A-Za-z0-9]{2}", message = "{licencePlate.pattern}")
     private String licencePlate;
-    @NotBlank(message = "{type.required}")
+    @NotNull(message = "{type.required}")
     private VehicleType vehicleType;
     private int branchId;
     
