@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class LoginRequest {
-    //TODO: Integration testing
     @NotBlank(message = "{username.required}")
     private String username;
 
