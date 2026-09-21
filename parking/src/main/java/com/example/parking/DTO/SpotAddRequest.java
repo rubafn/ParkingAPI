@@ -5,7 +5,9 @@ import com.example.parking.VehicleType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
+@Data 
 public class SpotAddRequest {
     private int branchId;
     @Min(value = 1, message = "{spotNumber.min}")
@@ -13,25 +15,4 @@ public class SpotAddRequest {
     private int spotNumber;
     @NotNull(message = "{type.required}")
     private VehicleType type;
-
-    
-    public int getSpotNumber() {
-        return spotNumber;
-    }
-    public void setSpotNumber(int spotNumber) {
-        this.spotNumber = spotNumber;
-    }
-    public VehicleType getType() {
-        return type;
-    }
-    public void setType(VehicleType type) {
-        this.type = type;
-    }
-    public int getBranchId() {
-        return branchId;
-    }
-    public void setBranchId(int branchId) {
-        this.branchId = branchId;
-    }
-
 }

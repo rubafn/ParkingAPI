@@ -2,6 +2,9 @@ package com.example.parking.DTO;
 
 import com.example.parking.UserType;
 
+import lombok.Data;
+
+@Data
 public class AuthResponse {
     private String username;
     private UserType type;
@@ -16,24 +19,5 @@ public class AuthResponse {
         this.username = username;
         this.type = type;
     }
-    public String getUsername() {
-        return username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    public UserType getType() {
-        return type;
-    }
-    public void setType(UserType type) {
-        this.type = type;
-    }
-    public String getToken() {
-        return token;
-    }
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     
 } 

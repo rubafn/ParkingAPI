@@ -588,7 +588,7 @@ public class ParkingServiceTest {
         SpotUpdateRequest request = new SpotUpdateRequest();
         request.setSpotNumber(20);
         request.setType(VehicleType.TRUCK);
-        request.setAvailable(false);
+        request.setIsAvailable(false);
 
         when(spotRepository.save(any(Spot.class)))
                 .thenReturn(spot);

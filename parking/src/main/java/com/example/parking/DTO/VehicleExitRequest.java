@@ -1,6 +1,8 @@
 package com.example.parking.DTO;
 
+import lombok.Data;
 
+@Data 
 public class VehicleExitRequest {
     private int branchId;
 
@@ -11,13 +13,4 @@ public class VehicleExitRequest {
     public VehicleExitRequest(int branchId) {
         this.branchId = branchId;
     }
-
-    public int getBranchId() {
-        return branchId;
-    }
-
-    public void setBranchId(int branchId) {
-        this.branchId = branchId;
-    }
-
 }

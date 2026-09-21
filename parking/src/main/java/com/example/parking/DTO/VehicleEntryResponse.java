@@ -2,6 +2,9 @@ package com.example.parking.DTO;
 
 import java.time.LocalDateTime;
 
+import lombok.Data;
+
+@Data 
 public class VehicleEntryResponse {
     private String licencePlate;
     private int branchId;
@@ -13,34 +16,5 @@ public class VehicleEntryResponse {
         this.licencePlate= licencePlate;
         this.assignedSpot=assignedSpot;
         this.entryTime = entry;
-    }
-    public int getAssignedSpot() {
-        return assignedSpot;
-    }
-
-    public void setAssignedSpot(int assignedSpot) {
-        this.assignedSpot = assignedSpot;
-    }
-
-    public String getLicencePlate() {
-        return licencePlate;
-    }
-
-    public void setLicencePlate(String licencePlate) {
-        this.licencePlate = licencePlate;
-    }
-
-    public LocalDateTime getEntryTime() {
-        return entryTime;
-    }
-
-    public void setEntryTime(LocalDateTime entryTime) {
-        this.entryTime = entryTime;
-    }
-    public int getBranchId() {
-        return branchId;
-    }
-    public void setBranchId(int branchId) {
-        this.branchId = branchId;
     }
 }

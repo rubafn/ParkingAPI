@@ -173,8 +173,8 @@ public class ParkingService {
             }
             spot.setType(request.getType());
         }
-        if(request.getAvailable()!=null){
-            spot.setAvailable(request.getAvailable().booleanValue());
+        if(request.getIsAvailable()!=null){
+            spot.setAvailable(request.getIsAvailable().booleanValue());
         }
         return this.spotRepo.save(spot);
     }
