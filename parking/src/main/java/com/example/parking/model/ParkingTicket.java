@@ -8,8 +8,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Data;
 
 @Entity
+@Data 
 public class ParkingTicket {
     
     @Id
@@ -27,40 +29,4 @@ public class ParkingTicket {
     private double fee;
     private LocalDateTime entryTime;
     private LocalDateTime exitTime;
-
-    public int getTicketId() {
-        return ticketId;
-    }
-    public Vehicle getVehicle() {
-        return vehicle;
-    }
-    public void setVehicle(Vehicle vehicle) {
-        this.vehicle = vehicle;
-    }
-    public Spot getSpot() {
-        return spot;
-    }
-    public void setSpot(Spot spot) {
-        this.spot = spot;
-    }
-    public double getFee() {
-        return fee;
-    }
-    public void setFee(double fee) {
-        this.fee = fee;
-    }
-    public LocalDateTime getEntryTime() {
-        return entryTime;
-    }
-    public void setEntryTime(LocalDateTime entryTime) {
-        this.entryTime = entryTime;
-    }
-    public LocalDateTime getExitTime() {
-        return exitTime;
-    }
-    public void setExitTime(LocalDateTime exitTime) {
-        this.exitTime = exitTime;
-    }
-
-
 }
