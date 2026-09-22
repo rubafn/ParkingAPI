@@ -1,13 +1,18 @@
 package com.example.parking.Security;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.example.parking.Repository.KioskRepository;
+import com.example.parking.model.Kiosk;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,13 +24,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
+    private final KioskRepository kioskRepo;
 
     public JwtAuthFilter(
             JwtService jwtService,
-            CustomUserDetailsService userDetailsService) {
+            CustomUserDetailsService userDetailsService, KioskRepository kiosk) {
 
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
+        this.kioskRepo=kiosk;
     }
 
     @Override
@@ -44,28 +51,62 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
-        String username = jwtService.extractUsername(token);
+        String subject = jwtService.extractUsername(token);
+        String authType = jwtService.extractAuthType(token);
 
-        if (username != null &&
+        System.out.println("SUBJECT = " + subject);
+        System.out.println("AUTH TYPE = " + authType);
+
+        if (subject != null &&
                 SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails =
-                    userDetailsService.loadUserByUsername(username);
+        if ("KIOSK".equals(authType)) {
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
+                Kiosk kiosk = kioskRepo.findByName(subject)
+                        .orElseThrow(() ->
+                                new RuntimeException("Kiosk not found"));
 
-            authentication.setDetails(
-                    new WebAuthenticationDetailsSource()
-                            .buildDetails(request)
-            );
+                if (!kiosk.isEnabled()) {
+                throw new RuntimeException("Kiosk is disabled");
+                }
 
-            SecurityContextHolder.getContext()
-                    .setAuthentication(authentication);
+                String authority = "KIOSK_" + kiosk.getType().name();
+
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                kiosk,
+                                null,
+                                List.of(new SimpleGrantedAuthority(authority))
+                        );
+
+                authentication.setDetails(
+                        new WebAuthenticationDetailsSource()
+                                .buildDetails(request)
+                );
+
+                SecurityContextHolder.getContext()
+                        .setAuthentication(authentication);
+
+        } else {
+
+                UserDetails userDetails =
+                        userDetailsService.loadUserByUsername(subject);
+
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
+
+                authentication.setDetails(
+                        new WebAuthenticationDetailsSource()
+                                .buildDetails(request)
+                );
+
+                SecurityContextHolder.getContext()
+                        .setAuthentication(authentication);
+        }
         }
 
         filterChain.doFilter(request, response);

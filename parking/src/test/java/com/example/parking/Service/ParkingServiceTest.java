@@ -38,7 +38,6 @@ import com.example.parking.DTO.SpotUpdateRequest;
 import com.example.parking.DTO.UserResponse;
 import com.example.parking.DTO.VehicleEntryRequest;
 import com.example.parking.DTO.VehicleEntryResponse;
-import com.example.parking.DTO.VehicleExitRequest;
 import com.example.parking.DTO.VehicleExitResponse;
 import com.example.parking.Exceptions.AlreadyParkedException;
 import com.example.parking.Exceptions.DoesNotExistException;
@@ -57,6 +56,8 @@ import com.example.parking.model.ParkingTicket;
 import com.example.parking.model.Spot;
 import com.example.parking.model.Users;
 import com.example.parking.model.Vehicle;
+import com.example.parking.model.Kiosk;
+import com.example.parking.KioskType;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -90,14 +91,36 @@ public class ParkingServiceTest {
     @InjectMocks
     private UserService userService;
 
-    void setUpSecurityContext() {
+    @InjectMocks 
+    private KioskService kioskService;
 
-        SecurityContextHolder.clearContext();
+    private Kiosk createEntryKiosk(int branchId) {
+        Branch branch = new Branch();
+        branch.setBranchId(branchId);
+        branch.setLocation("Ramallah");
 
-         SecurityContextHolder.getContext().setAuthentication(authentication);
+        Kiosk kiosk = new Kiosk();
+        kiosk.setName("RAMALLAH_ENTRY_01");
+        kiosk.setType(KioskType.ENTRY);
+        kiosk.setBranch(branch);
+        kiosk.setEnabled(true);
 
-        when(authentication.getName()).thenReturn("rubanabhan");
+        return kiosk;
     }
+    private Kiosk createExitKiosk(int branchId) {
+        Branch branch = new Branch();
+        branch.setBranchId(branchId);
+        branch.setLocation("Ramallah");
+
+        Kiosk kiosk = new Kiosk();
+        kiosk.setName("RAMALLAH_EXIT_01");
+        kiosk.setType(KioskType.EXIT);
+        kiosk.setBranch(branch);
+        kiosk.setEnabled(true);
+
+        return kiosk;
+    }
+
     @AfterEach
     void clearSecurityContext() {
         SecurityContextHolder.clearContext();
@@ -129,11 +152,12 @@ public class ParkingServiceTest {
         VehicleEntryRequest request = new VehicleEntryRequest();
         request.setLicencePlate("12-345-6A");
         request.setVehicleType(VehicleType.TRUCK);
-        request.setBranchId(1);
+
+        Kiosk kiosk = createEntryKiosk(1);
 
         assertThrows(
                 AlreadyParkedException.class,
-                () -> parkingService.enterVehicle(request)
+                () -> parkingService.enterVehicle(request,kiosk)
         );
     }
 
@@ -165,10 +189,10 @@ public class ParkingServiceTest {
         VehicleEntryRequest request = new VehicleEntryRequest();
         request.setLicencePlate("12-345-6A");
         request.setVehicleType(VehicleType.TRUCK);
-        request.setBranchId(1);
 
-         VehicleEntryResponse response =
-            parkingService.enterVehicle(request);
+        Kiosk kiosk = createEntryKiosk(1);
+
+        VehicleEntryResponse response = parkingService.enterVehicle(request, kiosk);
 
         // Check the result
         assertEquals("12-345-6A", response.getLicencePlate());
@@ -200,11 +224,12 @@ public class ParkingServiceTest {
         VehicleEntryRequest request = new VehicleEntryRequest();
         request.setLicencePlate("12-345-6A");
         request.setVehicleType(VehicleType.MOTORCYCLE);
-        request.setBranchId(1);
+
+        Kiosk kiosk = createEntryKiosk(1);
 
         assertThrows(
                 NoAvailableSpotsException.class,
-                () -> parkingService.enterVehicle(request)
+                () -> parkingService.enterVehicle(request,kiosk)
         );
     }
     @Test
@@ -216,7 +241,6 @@ public class ParkingServiceTest {
 
         request.setLicencePlate("12-35-6");
         request.setVehicleType(VehicleType.CAR);
-        request.setBranchId(1);
 
         Set<ConstraintViolation<VehicleEntryRequest>> violations =
                 validator.validate(request);
@@ -232,7 +256,6 @@ public class ParkingServiceTest {
 
         request.setLicencePlate("12-345-6A");
         request.setVehicleType(VehicleType.CAR);
-        request.setBranchId(1);
 
         Set<ConstraintViolation<VehicleEntryRequest>> violations =
                 validator.validate(request);
@@ -292,8 +315,8 @@ public class ParkingServiceTest {
         when(ticketRepository.findByVehicleVehicleIdAndExitTimeIsNull(v.getVehicleId()))
                 .thenReturn(ticket);
 
-
-        VehicleExitResponse response = parkingService.exitVehicle("12-345-6A", new VehicleExitRequest(branch.getBranchId()));
+        Kiosk kiosk = createExitKiosk(1);
+        VehicleExitResponse response = parkingService.exitVehicle("12-345-6A",kiosk);
 
         assertTrue(s.isAvailable());
 
@@ -318,14 +341,16 @@ public class ParkingServiceTest {
         when(ticketRepository.findByVehicleVehicleIdAndExitTimeIsNull(v.getVehicleId()))
                 .thenReturn(null);
 
-        assertThrows(NoTicketFoundException.class, () -> parkingService.exitVehicle("12-345-6A", new VehicleExitRequest(1)));
+        Kiosk kiosk = createExitKiosk(1);
+        assertThrows(NoTicketFoundException.class, () -> parkingService.exitVehicle("12-345-6A",kiosk));
     }
 
     @Test
     void VehicleExitTest_vehicleDoesNotExist(){
          when(vehicleRepository.findByLicencePlate("12-345-6A"))
                 .thenReturn(null);
-        assertThrows(NoVehicleFoundException.class, ()-> parkingService.exitVehicle("12-345-6A", new VehicleExitRequest(1)));
+        Kiosk kiosk = createExitKiosk(1);
+        assertThrows(NoVehicleFoundException.class, ()-> parkingService.exitVehicle("12-345-6A",kiosk));
     }
     @Test
     void VehicleExitTest_wrongBranch() {
@@ -358,14 +383,14 @@ public class ParkingServiceTest {
                 .findByVehicleVehicleIdAndExitTimeIsNull(v.getVehicleId()))
                 .thenReturn(ticket);
 
+                
+        Kiosk kiosk = createExitKiosk(2);
         when(branchRepository.findById(2))
                 .thenReturn(Optional.of(requestedBranch));
-
         assertThrows(
                 NoTicketFoundException.class,
                 () -> parkingService.exitVehicle(
-                        "12-345-6A",
-                        new VehicleExitRequest(2)
+                        "12-345-6A",kiosk
                 )
         );
 
@@ -401,12 +426,11 @@ public class ParkingServiceTest {
 
         when(branchRepository.findById(999))
                 .thenReturn(Optional.empty());
-
+        Kiosk kiosk = createExitKiosk(999);
         assertThrows(
                 DoesNotExistException.class,
                 () -> parkingService.exitVehicle(
-                        "12-345-6A",
-                        new VehicleExitRequest(999)
+                        "12-345-6A",kiosk
                 )
         );
     }

@@ -14,13 +14,11 @@ public class VehicleEntryRequest {
     private String licencePlate;
     @NotNull(message = "{type.required}")
     private VehicleType vehicleType;
-    private int branchId;
     
     public VehicleEntryRequest(){
     }
-    public VehicleEntryRequest(String licencePlate, VehicleType vehicleType, int branchId) {
+    public VehicleEntryRequest(String licencePlate, VehicleType vehicleType) {
         this.licencePlate = licencePlate;
         this.vehicleType = vehicleType;
-        this.branchId= branchId;
     }
 }

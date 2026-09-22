@@ -9,10 +9,10 @@ import com.example.parking.DTO.SpotAddRequest;
 import com.example.parking.DTO.SpotUpdateRequest;
 import com.example.parking.DTO.VehicleEntryRequest;
 import com.example.parking.DTO.VehicleEntryResponse;
-import com.example.parking.DTO.VehicleExitRequest;
 import com.example.parking.DTO.VehicleExitResponse;
 import com.example.parking.Service.ParkingService;
 import com.example.parking.model.Branch;
+import com.example.parking.model.Kiosk;
 import com.example.parking.model.ParkingTicket;
 import com.example.parking.model.Spot;
 import com.example.parking.model.Vehicle;
@@ -27,6 +27,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 
@@ -41,12 +42,17 @@ public class ParkingController {
     }
     
     @PostMapping("/entry")
-    public VehicleEntryResponse enterVehicle(@Valid @RequestBody VehicleEntryRequest request) {
-        return this.service.enterVehicle(request);
+    @PreAuthorize("hasAuthority('KIOSK_ENTRY')")
+    public VehicleEntryResponse enterVehicle(
+            @AuthenticationPrincipal Kiosk kiosk,
+            @Valid @RequestBody VehicleEntryRequest request) {
+
+        return service.enterVehicle(request, kiosk);
     }
     @PostMapping("/exit/{plateNumber}")
-    public VehicleExitResponse exitVehicle(@PathVariable String plateNumber, @Valid @RequestBody VehicleExitRequest request) {
-        return this.service.exitVehicle(plateNumber,request);
+    @PreAuthorize("hasAuthority('KIOSK_EXIT')")
+    public VehicleExitResponse exitVehicle(@PathVariable String plateNumber, @AuthenticationPrincipal Kiosk kiosk) {
+        return this.service.exitVehicle(plateNumber,kiosk);
     }
     @GetMapping("/spots")
     @PreAuthorize("isAuthenticated()")

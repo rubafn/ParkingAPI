@@ -12,7 +12,6 @@ import com.example.parking.DTO.SpotAddRequest;
 import com.example.parking.DTO.SpotUpdateRequest;
 import com.example.parking.DTO.VehicleEntryRequest;
 import com.example.parking.DTO.VehicleEntryResponse;
-import com.example.parking.DTO.VehicleExitRequest;
 import com.example.parking.DTO.VehicleExitResponse;
 import com.example.parking.Exceptions.AlreadyParkedException;
 import com.example.parking.Exceptions.DoesNotExistException;
@@ -29,6 +28,7 @@ import com.example.parking.Repository.VehicleRepository;
 import com.example.parking.Strategy.FeeStrategy;
 import com.example.parking.Strategy.TypesFeeStrategy;
 import com.example.parking.model.Branch;
+import com.example.parking.model.Kiosk;
 import com.example.parking.model.ParkingTicket;
 import com.example.parking.model.Spot;
 import com.example.parking.model.Vehicle;
@@ -47,7 +47,7 @@ public class ParkingService {
         this.branchRepo= branchRepo;
     }
 
-    public VehicleEntryResponse enterVehicle(VehicleEntryRequest request){
+    public VehicleEntryResponse enterVehicle(VehicleEntryRequest request, Kiosk kiosk){
         String plate = request.getLicencePlate();
         VehicleType type = request.getVehicleType();
 
@@ -64,7 +64,7 @@ public class ParkingService {
         if(ticket != null){
             throw new AlreadyParkedException("Vehicle Already has an ongoing ticket that didn't exit");
         }
-        Spot spot = spotRepo.findFirstByTypeAndBranchBranchIdAndIsAvailableTrue(type,request.getBranchId());
+        Spot spot = spotRepo.findFirstByTypeAndBranchBranchIdAndIsAvailableTrue(type,kiosk.getBranch().getBranchId());
         if(spot==null){
             throw new NoAvailableSpotsException("No spots are available for this vehicle type");
         }
@@ -77,10 +77,10 @@ public class ParkingService {
         ticket.setEntryTime(LocalDateTime.now());
         ticketRepo.save(ticket);
 
-        return new VehicleEntryResponse(request.getBranchId(),plate, spot.getSpotNumber(), ticket.getEntryTime());
+        return new VehicleEntryResponse(kiosk.getBranch().getBranchId(),plate, spot.getSpotNumber(), ticket.getEntryTime());
     }
 
-    public VehicleExitResponse exitVehicle(String plate, VehicleExitRequest request){
+    public VehicleExitResponse exitVehicle(String plate, Kiosk kiosk){
         if(!plate.matches("[A-Za-z0-9]{2}-[A-Za-z0-9]{3}-[A-Za-z0-9]{2}")){
             throw new InvalidVehicleTypeException("plate number must follow format XX-XXX-XX");
         }
@@ -93,7 +93,7 @@ public class ParkingService {
         if(ticket == null){
             throw new NoTicketFoundException("Ticket either doesn't exist or already exited");
         }
-        Branch branch = branchRepo.findById(request.getBranchId()).orElseThrow(() -> new DoesNotExistException("Branch does not exist"));
+        Branch branch = branchRepo.findById(kiosk.getBranch().getBranchId()).orElseThrow(() -> new DoesNotExistException("Branch does not exist"));
         if(!ticket.getSpot().getBranch().equals(branch)){
             throw new NoTicketFoundException("Ticket doesn't belong to this branch");
         }
