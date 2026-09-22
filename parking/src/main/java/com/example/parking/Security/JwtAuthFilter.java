@@ -54,9 +54,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String subject = jwtService.extractUsername(token);
         String authType = jwtService.extractAuthType(token);
 
-        System.out.println("SUBJECT = " + subject);
-        System.out.println("AUTH TYPE = " + authType);
-
         if (subject != null &&
                 SecurityContextHolder.getContext().getAuthentication() == null) {
 

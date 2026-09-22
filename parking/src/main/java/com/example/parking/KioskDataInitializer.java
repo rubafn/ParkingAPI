@@ -8,8 +8,10 @@ import com.example.parking.Repository.BranchRepository;
 import com.example.parking.Repository.KioskRepository;
 import com.example.parking.model.Branch;
 import com.example.parking.model.Kiosk;
+import org.springframework.context.annotation.Profile;
 
 @Component
+@Profile("!test")
 public class KioskDataInitializer implements CommandLineRunner {
 
     private final KioskRepository kioskRepository;

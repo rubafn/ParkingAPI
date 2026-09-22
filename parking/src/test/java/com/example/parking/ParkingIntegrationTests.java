@@ -1,5 +1,6 @@
 package com.example.parking;
 
+import org.junit.jupiter.api.AutoClose;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,10 +14,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.parking.Repository.BranchRepository;
 import com.example.parking.Repository.SpotRepository;
+import com.example.parking.Repository.TicketRepository;
 import com.example.parking.Repository.UserRepository;
+import com.example.parking.Repository.VehicleRepository;
 import com.example.parking.model.Branch;
 import com.example.parking.model.Spot;
 import com.example.parking.model.Users;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -28,6 +32,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.example.parking.Repository.KioskRepository;
+import com.example.parking.model.Kiosk;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -46,16 +53,35 @@ public class ParkingIntegrationTests {
     @Autowired
     private UserRepository userRepo;
 
+    @Autowired 
+    private TicketRepository ticketRepo;
+
+    @Autowired 
+    private VehicleRepository vehicleRepo;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private KioskRepository kioskRepo;
 
     // Store the branch created for the current test
     private Branch branch;
     private Spot spot;
+    private Kiosk entryKiosk;
+    private Kiosk exitKiosk;
+
+    private final String entrySecret = "entrySecret123!";
+    private final String exitSecret = "exitSecret123!";
 
 
     @BeforeEach
     void setUp() {
+        ticketRepo.deleteAll();
+        vehicleRepo.deleteAll();
+        kioskRepo.deleteAll();
+        spotRepo.deleteAll();
+        branchRepo.deleteAll();
 
         // Create a branch in the temporary H2 database
         branch = new Branch();
@@ -70,31 +96,77 @@ public class ParkingIntegrationTests {
         spot.setType(VehicleType.CAR);
 
         spotRepo.save(spot);
+
+        entryKiosk = new Kiosk();
+        entryKiosk.setName("TEST_ENTRY_01");
+        entryKiosk.setSecret(passwordEncoder.encode(entrySecret));
+        entryKiosk.setType(KioskType.ENTRY);
+        entryKiosk.setBranch(branch);
+        entryKiosk.setEnabled(true);
+        entryKiosk = kioskRepo.save(entryKiosk);
+
+        exitKiosk = new Kiosk();
+        exitKiosk.setName("TEST_EXIT_01");
+        exitKiosk.setSecret(passwordEncoder.encode(exitSecret));
+        exitKiosk.setType(KioskType.EXIT);
+        exitKiosk.setBranch(branch);
+        exitKiosk.setEnabled(true);
+        exitKiosk = kioskRepo.save(exitKiosk);
+    }
+
+    private String authenticateKiosk(
+        String name,
+        String secret) throws Exception {
+
+        String response = mockMvc.perform(
+                post("/api/kiosk/auth")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {
+                            "name": "%s",
+                            "secret": "%s"
+                        }
+                        """.formatted(name, secret))
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.token").isNotEmpty())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        return objectMapper
+                .readTree(response)
+                .get("token")
+                .asText();
     }
 
 
     @Test
     void testEntry() throws Exception {
 
-        int branchId = branch.getBranchId();
+        String token =authenticateKiosk("TEST_ENTRY_01", entrySecret);
 
         mockMvc.perform(
-            post("/api/parking/entry")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                    {
-                        "licencePlate": "12-345-68",
-                        "vehicleType": "CAR",
-                        "branchId": %d
-                    }
-                    """.formatted(branchId))
-        )
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.licencePlate").value("12-345-68"))
-        .andExpect(jsonPath("$.branchId").value(branchId))
-        .andExpect(jsonPath("$.assignedSpot").value(110));
-        Spot updatedSpot = spotRepo.findById(spot.getSpotId())
-        .orElseThrow();
+                post("/api/parking/entry")
+                    .header(
+                        "Authorization",
+                        "Bearer " + token
+                    )
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {
+                            "licencePlate": "12-345-68",
+                            "vehicleType": "CAR"
+                        }
+                        """))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.licencePlate").value("12-345-68"))
+            .andExpect(jsonPath("$.branchId").value(branch.getBranchId()))
+            .andExpect(jsonPath("$.assignedSpot").value(110));
+
+        Spot updatedSpot =spotRepo.findById(spot.getSpotId()).orElseThrow();
         assertFalse(updatedSpot.isAvailable());
     }
 
@@ -102,41 +174,43 @@ public class ParkingIntegrationTests {
     @Test
     void testExit() throws Exception {
 
-        int branchId = branch.getBranchId();
+        String entryToken =authenticateKiosk("TEST_ENTRY_01", entrySecret);
 
-        // ARRANGE:
-        // First enter the vehicle so that it has an active ticket.
+        String exitToken =authenticateKiosk("TEST_EXIT_01", exitSecret);
+
+
+        // ENTER
         mockMvc.perform(
-            post("/api/parking/entry")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                    {
-                        "licencePlate": "12-345-60",
-                        "vehicleType": "CAR",
-                        "branchId": %d
-                    }
-                    """.formatted(branchId))
-        )
-        .andExpect(status().isOk());
+                post("/api/parking/entry")
+                    .header(
+                        "Authorization",
+                        "Bearer " + entryToken
+                    )
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {
+                            "licencePlate": "12-345-60",
+                            "vehicleType": "CAR"
+                        }
+                        """)
+            )
+            .andExpect(status().isOk());
 
 
-        // ACT:
-        // Now exit the same vehicle from the same branch.
+        // EXIT
         mockMvc.perform(
-            post("/api/parking/exit/12-345-60")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                    {
-                        "branchId": %d
-                    }
-                    """.formatted(branchId))
-        )
+                post("/api/parking/exit/12-345-60")
+                    .header(
+                        "Authorization",
+                        "Bearer " + exitToken
+                    )
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.plateNumber").value("12-345-60"));
 
-        // ASSERT
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.plateNumber").value("12-345-60"));
-        Spot updatedSpot = spotRepo.findById(spot.getSpotId())
-        .orElseThrow();
+
+        Spot updatedSpot =spotRepo.findById(spot.getSpotId()).orElseThrow();
+
         assertTrue(updatedSpot.isAvailable());
     }
 
@@ -206,17 +280,21 @@ public class ParkingIntegrationTests {
     @Test
     void testInvalidEntry() throws Exception {
 
-        mockMvc.perform(
+    String token =authenticateKiosk("TEST_ENTRY_01", entrySecret);
+
+    mockMvc.perform(
             post("/api/parking/entry")
-                .with(user("employee").roles("USER"))
+                .header(
+                    "Authorization",
+                    "Bearer " + token
+                )
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
                         "licencePlate": "BAD",
-                        "vehicleType": "CAR",
-                        "branchId": %d
+                        "vehicleType": "CAR"
                     }
-                    """.formatted(branch.getBranchId()))
+                    """)
         )
         .andExpect(status().isBadRequest());
     }
@@ -251,7 +329,43 @@ public class ParkingIntegrationTests {
         .andExpect(jsonPath("$.token").exists())
         .andExpect(jsonPath("$.token").isNotEmpty());
     }
+    @Test
+    void testEntryKioskCannotExit() throws Exception {
 
+        String entryToken =
+                authenticateKiosk("TEST_ENTRY_01", entrySecret);
+
+        mockMvc.perform(
+                post("/api/parking/exit/12-345-60")
+                    .header(
+                        "Authorization",
+                        "Bearer " + entryToken
+                    )
+            )
+            .andExpect(status().isForbidden());
+    }
+    @Test
+    void testExitKioskCannotEnter() throws Exception {
+
+        String exitToken =
+                authenticateKiosk("TEST_EXIT_01", exitSecret);
+
+        mockMvc.perform(
+                post("/api/parking/entry")
+                    .header(
+                        "Authorization",
+                        "Bearer " + exitToken
+                    )
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                        {
+                            "licencePlate": "12-345-68",
+                            "vehicleType": "CAR"
+                        }
+                        """)
+            )
+            .andExpect(status().isForbidden());
+    }
 }
 
    
