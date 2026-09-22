@@ -7,8 +7,8 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-@Entity
 @Data 
+@Entity
 public class Branch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

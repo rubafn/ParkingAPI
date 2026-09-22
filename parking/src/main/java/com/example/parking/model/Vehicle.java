@@ -11,8 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
-@Entity
 @Data 
+@Entity 
 public class Vehicle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
