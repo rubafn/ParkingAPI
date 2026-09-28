@@ -14,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.example.parking.Repository.KioskRepository;
 import com.example.parking.model.Kiosk;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,6 +51,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7);
+
+        try{
 
         String subject = jwtService.extractUsername(token);
         String authType = jwtService.extractAuthType(token);
@@ -104,6 +107,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext()
                         .setAuthentication(authentication);
         }
+        }
+        }catch(ExpiredJwtException ex){
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("""
+                        {
+                        "status": 401,
+                        "message": "JWT token has expired"
+                        }
+                        """);
+                return;
         }
 
         filterChain.doFilter(request, response);

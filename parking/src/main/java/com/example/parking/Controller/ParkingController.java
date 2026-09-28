@@ -55,42 +55,42 @@ public class ParkingController {
         return this.service.exitVehicle(plateNumber,kiosk);
     }
     @GetMapping("/spots")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Page<Spot> getAllSpots( @ParameterObject Pageable pageable) {
         return this.service.getAllSpots(pageable);
     }
     @GetMapping("/spots/available")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Page<Spot> getAvailableSpots( @ParameterObject Pageable pageable){
         return this.service.getAvailableSpots(pageable);
     }
     @GetMapping("/vehicles")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Page<Vehicle> getAllVehicles( @ParameterObject Pageable pageable){
         return this.service.findAllVehicles(pageable);
     }
     @GetMapping("/vehicles/search")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Page<Vehicle> searchVehicles(@RequestParam String plate, @ParameterObject Pageable pageable) {
         return this.service.searchVehicles(plate, pageable);
     }
     @GetMapping("/vehicles/{type}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Page<Vehicle> getAllVehiclesByType(@PathVariable VehicleType type, @ParameterObject Pageable pageable){
         return this.service.findAllVehiclesByType(type, pageable);
     }
     @GetMapping("/tickets")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Page<ParkingTicket> getAllTickets( @ParameterObject Pageable pageable){
         return this.service.findAllTickets(pageable);
     }
     @GetMapping("/tickets/ongoing")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Page<ParkingTicket> getAllOngoingTickets( @ParameterObject Pageable pageable){
         return this.service.findAllOngoingTickets(pageable);
     }
     @GetMapping("/tickets/search")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Page<ParkingTicket> searchTickets(@RequestParam String licencePlate, @ParameterObject Pageable pageable) {
         return service.searchTickets(licencePlate, pageable);
     }
@@ -101,7 +101,7 @@ public class ParkingController {
         return this.service.addNewSpot(request);
     }
     @GetMapping("/spots/search")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Page<Spot> searchSpots( @RequestParam String location, @ParameterObject Pageable pageable) {
         return service.searchSpots(location, pageable);
     }
@@ -117,7 +117,7 @@ public class ParkingController {
         return this.service.addBranch(location);
     }
     @GetMapping("/branches/search")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Page<Branch> searchBranches(@RequestParam String location, @ParameterObject Pageable pageable) {
         return service.searchBranches(location, pageable);
     }
