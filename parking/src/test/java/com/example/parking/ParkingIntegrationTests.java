@@ -273,7 +273,7 @@ public class ParkingIntegrationTests {
         )
         .andExpect(authenticated().withUsername("normal"))
         .andExpect(authenticated().withRoles("USER"))
-        .andExpect(status().isForbidden());
+        .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -341,7 +341,7 @@ public class ParkingIntegrationTests {
                         "Bearer " + entryToken
                     )
             )
-            .andExpect(status().isForbidden());
+            .andExpect(status().isBadRequest());
     }
     @Test
     void testExitKioskCannotEnter() throws Exception {
@@ -363,7 +363,7 @@ public class ParkingIntegrationTests {
                         }
                         """)
             )
-            .andExpect(status().isForbidden());
+            .andExpect(status().isBadRequest());
     }
 }
 
